@@ -38,7 +38,44 @@ mkdir -p ~/.coral && git clone https://github.com/Coral-Protocol/coral-server.gi
 cd ~/.coral/coral-server && git pull
 ```
 
-## Step 3: Verify the setup
+## Step 3: Configure config.toml
+
+Create or overwrite the server configuration file. First, determine the user's home directory:
+
+```bash
+echo $HOME
+```
+
+Then write the config file, replacing `<HOME>` with the actual home directory path:
+
+```bash
+cat > ~/.coral/coral-server/src/main/resources/config.toml << 'CONFIGEOF'
+[docker]
+# Use host.docker.internal for WSL
+address = "host.docker.internal"
+socket = "unix:///var/run/docker.sock"
+
+[network]
+bind_address = "0.0.0.0"
+external_address = "0.0.0.0"
+bind_port = 5555
+allow_any_host = true
+
+[session]
+defaultWaitTimeout = 240000
+
+[auth]
+keys = ["test"]
+
+[registry]
+include_debug_agents = true
+local_agents = []
+CONFIGEOF
+```
+
+Note: The `local_agents` list is empty for now — it will be populated later when built-in agents are installed via the `coral-built-in-agent-setup` skill.
+
+## Step 4: Verify the setup
 
 Confirm the server is ready:
 
@@ -51,6 +88,6 @@ If "SETUP_OK", tell the user:
 - How to start it: `cd ~/.coral/coral-server && ./gradlew run`
 - That it will be available at `http://localhost:5555` once started
 
-## Step 4: Offer to install built-in agents
+## Step 5: Offer to install built-in agents
 
-After coral-server setup is complete, ask the user if they want to install built-in agents (Claude Code, Hermes). Then read and follow the skill at `coral-built-in-agent-setup/SKILL.md` (sibling directory) to proceed with agent installation.
+After coral-server setup is complete, ask the user if they want to install and setup built-in agents (Claude Code, Hermes). Then read and follow the skill at `coral-built-in-agent-setup/SKILL.md` (sibling directory) to proceed with agent installation and setup.

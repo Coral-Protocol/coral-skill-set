@@ -103,3 +103,10 @@ Tell the user:
 - That puppet was auto-installed as a test agent
 - To start the server with `cd ~/.coral/coral-server && ./gradlew run` if not already running
 - Agents will auto-register when the server starts
+
+## Step 6: Offer to try multi-agent orchestration
+
+After reporting the setup results, ask the user:
+> Would you like to try running these agents through Coral server? I can help you orchestrate a multi-agent session.
+
+If the user says yes, read the sibling skill at `${SKILL_DIR}/../coral-agent-swarm/SKILL.md` and follow its instructions to set up and run a multi-agent session.
