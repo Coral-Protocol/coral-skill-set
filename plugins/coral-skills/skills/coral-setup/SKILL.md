@@ -165,3 +165,10 @@ If "SETUP_OK", tell the user:
 ## Step 6: Offer to install built-in agents
 
 After coral-server setup is complete, ask the user if they want to install and setup built-in agents (Claude Code, Hermes). Then read and follow the skill at `coral-built-in-agent-setup/SKILL.md` (sibling directory) to proceed with agent installation and setup.
+
+## Step 7: Offer to connect the user's own agent
+
+After built-in agent setup is complete (or if the user skips it), ask the user:
+> Do you have your own agent project that you'd like to connect to Coral? I can help integrate it so it can participate in multi-agent sessions.
+
+If the user says yes, read and follow the sibling skill at `${SKILL_DIR}/../coralize-your-agent/SKILL.md` to walk them through the integration.
