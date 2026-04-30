@@ -7,6 +7,7 @@ A [Claude Code plugin marketplace](https://code.claude.com/docs/en/plugin-market
 ```
 /plugin marketplace add Coral-Protocol/coral-skill-set
 /plugin install coral-skills@coral-skill-set
+/reload-plugins
 ```
 
 ## Skills
