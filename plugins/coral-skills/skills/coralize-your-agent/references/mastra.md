@@ -214,6 +214,14 @@ if [ ! -d "$SCRIPT_DIR/node_modules" ]; then
   cd "$SCRIPT_DIR" && npm install
 fi
 
+# Load .env file if it exists (mastra dev/start does this automatically,
+# but coral mode runs via tsx directly so we need to load it ourselves)
+if [ -f "$SCRIPT_DIR/.env" ]; then
+  set -a
+  source "$SCRIPT_DIR/.env"
+  set +a
+fi
+
 # Export coral environment variables for the Mastra MCPClient
 export CORAL_CONNECTION_URL="$CORAL_CONNECTION_URL"
 export CORAL_SESSION_ID="$CORAL_SESSION_ID"
@@ -246,31 +254,6 @@ Fix any type errors before proceeding. Common issues:
 - Missing `@mastra/mcp` installation (Step 1)
 - Incorrect agent key in `coral-worker.ts` (Step 5)
 - Top-level `await` requires `"module": "nodenext"` or similar in `tsconfig.json` (Mastra projects already have this)
-
-## Environment Variables and .env Files
-
-Mastra CLI (`mastra dev` / `mastra start`) uses dotenv to auto-load `.env` files. The loading logic in `node_modules/mastra/dist/index.js`:
-
-```javascript
-config({ path: [options.env || ".env.production", ".env"], quiet: true });
-```
-
-**Loading priority:**
-1. `.env.production` (when using `mastra start`) or a custom file via `--env` flag
-2. `.env` (fallback)
-
-**Both entry points load `.env`:**
-- `mastra dev` (Studio mode)
-- `mastra start` (production mode)
-
-API keys (e.g., `OPENAI_API_KEY`) are read from `process.env`, so adding them to `.env` in the project root is sufficient for standalone mode.
-
-**Important: Coral mode does NOT auto-load `.env`.** When launched via Coral (`startup.sh` → `npx tsx src/coral-worker.ts`), the process runs directly through `tsx`, not through `mastra dev/start`, so dotenv is not invoked automatically.
-
-To ensure API keys are available in Coral mode, either:
-1. Add `source .env` or `export $(cat .env | xargs)` to `startup.sh` before the `exec` line
-2. Install `dotenv` and add `import 'dotenv/config'` at the top of `coral-worker.ts`
-3. Ensure the required environment variables are already exported in your shell profile (`~/.zshrc`, `~/.bashrc`)
 
 ## Standalone mode
 
