@@ -120,10 +120,19 @@ Create or overwrite the server configuration file. First, determine the user's h
 echo $HOME
 ```
 
-Then write the config file, replacing `<HOME>` with the actual home directory path:
+First, fetch the latest coral-studio (console) release version from GitHub:
 
 ```bash
-cat > ~/.coral/coral-server/src/main/resources/config.toml << 'CONFIGEOF'
+CONSOLE_VERSION=$(curl -s https://api.github.com/repos/Coral-Protocol/coral-studio/releases/latest | grep '"tag_name"' | sed 's/.*"tag_name": *"\([^"]*\)".*/\1/')
+echo "Latest coral-studio version: $CONSOLE_VERSION"
+```
+
+If the API call fails or returns empty, fall back to `"v0.3.11"`.
+
+Then write the config file, replacing `<HOME>` with the actual home directory path and `<CONSOLE_VERSION>` with the version fetched above:
+
+```bash
+cat > ~/.coral/coral-server/src/main/resources/config.toml << CONFIGEOF
 [docker]
 # Use host.docker.internal for WSL
 address = "host.docker.internal"
@@ -144,10 +153,13 @@ keys = ["test"]
 [registry]
 include_debug_agents = true
 local_agents = []
+
+[console]
+consoleReleaseVersion = "$CONSOLE_VERSION"
 CONFIGEOF
 ```
 
-Note: The `local_agents` list is empty for now — it will be populated later when built-in agents are installed via the `coral-built-in-agent-setup` skill.
+Note: The `local_agents` list is empty for now — it will be populated later when built-in agents are installed via the `coral-built-in-agent-setup` skill. The `[console]` section pins the coral-studio UI to the latest release version.
 
 ## Step 5: Verify the setup
 
