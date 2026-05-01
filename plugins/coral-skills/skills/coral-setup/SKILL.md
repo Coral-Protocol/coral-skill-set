@@ -123,7 +123,7 @@ echo $HOME
 First, fetch the latest coral-studio (console) release version from GitHub:
 
 ```bash
-CONSOLE_VERSION=$(curl -s https://api.github.com/repos/Coral-Protocol/coral-studio/releases/latest | grep '"tag_name"' | sed 's/.*"tag_name": *"\([^"]*\)".*/\1/')
+CONSOLE_VERSION=$(curl -sL https://api.github.com/repos/Coral-Protocol/coral-studio/releases/latest | grep '"tag_name"' | sed 's/.*"tag_name": *"\([^"]*\)".*/\1/')
 echo "Latest coral-studio version: $CONSOLE_VERSION"
 ```
 
