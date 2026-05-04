@@ -5,7 +5,7 @@ description: Install built-in agents (Claude Code, Hermes, Puppet) into the Cora
 
 # Coral Built-in Agent Setup
 
-This skill installs built-in agents into `~/.coral/` and registers them in the Coral server config.
+This skill installs built-in agents into `~/.coral/agents/` and registers them in the Coral server config.
 
 The bundled agent templates are in `${SKILL_DIR}/agents/` (claude-code, hermes, puppet).
 
@@ -48,27 +48,29 @@ If any selected agent is missing its CLI, stop and wait for the user to install 
 
 Puppet has no prerequisites — it only uses `curl` and `bash`.
 
-## Step 3: Deploy agents to ~/.coral/
+## Step 3: Deploy agents to ~/.coral/agents/
 
-For each agent to install (user-selected ones + puppet which is always installed), copy from the skill's bundled templates:
+Create the agents directory and copy from the skill's bundled templates. For each agent to install (user-selected ones + puppet which is always installed):
 
 ```bash
+mkdir -p ~/.coral/agents
+
 # Always install puppet
-cp -r ${SKILL_DIR}/agents/puppet ~/.coral/puppet
+cp -r ${SKILL_DIR}/agents/puppet ~/.coral/agents/puppet
 
 # If user wants Claude Code
-cp -r ${SKILL_DIR}/agents/claude-code ~/.coral/claude-code
+cp -r ${SKILL_DIR}/agents/claude-code ~/.coral/agents/claude-code
 
 # If user wants Hermes
-cp -r ${SKILL_DIR}/agents/hermes ~/.coral/hermes
+cp -r ${SKILL_DIR}/agents/hermes ~/.coral/agents/hermes
 ```
 
 Make startup scripts executable:
 
 ```bash
-chmod +x ~/.coral/puppet/startup.sh
-chmod +x ~/.coral/claude-code/startup.sh  # if installed
-chmod +x ~/.coral/hermes/startup.sh       # if installed
+chmod +x ~/.coral/agents/puppet/startup.sh
+chmod +x ~/.coral/agents/claude-code/startup.sh  # if installed
+chmod +x ~/.coral/agents/hermes/startup.sh       # if installed
 ```
 
 ## Step 4: Update config.toml
@@ -77,15 +79,15 @@ Read `~/.coral/coral-server/src/main/resources/config.toml` and update the `loca
 
 The paths should use the user's actual home directory (expand `~`). Build the list based on what was installed:
 
-- Always include: `"<HOME>/.coral/puppet"`
-- If Claude Code installed: `"<HOME>/.coral/claude-code"`
-- If Hermes installed: `"<HOME>/.coral/hermes"`
+- Always include: `"<HOME>/.coral/agents/puppet"`
+- If Claude Code installed: `"<HOME>/.coral/agents/claude-code"`
+- If Hermes installed: `"<HOME>/.coral/agents/hermes"`
 
 Example result in config.toml:
 
 ```toml
 [registry]
-local_agents = ["/Users/username/.coral/claude-code", "/Users/username/.coral/hermes", "/Users/username/.coral/puppet"]
+local_agents = ["/Users/username/.coral/agents/claude-code", "/Users/username/.coral/agents/hermes", "/Users/username/.coral/agents/puppet"]
 ```
 
 Use the Edit tool to update only the `local_agents` line. Do not modify any other part of config.toml.
@@ -95,7 +97,7 @@ Use the Edit tool to update only the `local_agents` line. Do not modify any othe
 Confirm the setup:
 
 ```bash
-echo "=== INSTALLED AGENTS ===" && ls -d ~/.coral/claude-code ~/.coral/hermes ~/.coral/puppet 2>/dev/null && echo "=== CONFIG CHECK ===" && grep "local_agents" ~/.coral/coral-server/src/main/resources/config.toml
+echo "=== INSTALLED AGENTS ===" && ls -d ~/.coral/agents/claude-code ~/.coral/agents/hermes ~/.coral/agents/puppet 2>/dev/null && echo "=== CONFIG CHECK ===" && grep "local_agents" ~/.coral/coral-server/src/main/resources/config.toml
 ```
 
 Tell the user:
