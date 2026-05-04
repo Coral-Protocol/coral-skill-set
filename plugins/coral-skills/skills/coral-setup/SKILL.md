@@ -161,26 +161,52 @@ CONFIGEOF
 
 Note: The `local_agents` list is empty for now — it will be populated later when built-in agents are installed via the `coral-built-in-agent-setup` skill. The `[console]` section pins the coral-studio UI to the latest release version.
 
-## Step 5: Verify the setup
+## Step 5: Test-start the server
 
-Confirm the server is ready:
+After cloning/updating, patching, and configuring, do a test start to verify the server compiles and runs correctly. The first build takes 1-2 minutes because Gradle must download dependencies and compile Kotlin.
 
 ```bash
-test -f ~/.coral/coral-server/gradlew && echo "SETUP_OK" || echo "SETUP_FAILED"
+mkdir -p ~/.coral/logs && cd ~/.coral/coral-server && nohup ./gradlew run > ~/.coral/logs/coral-server.log 2>&1 &
+echo "PID: $!"
 ```
 
-If "SETUP_OK", tell the user:
+Then poll until the server responds (allow up to 3 minutes for first-time compilation):
+
+```bash
+for i in $(seq 1 90); do
+  STATUS=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:5555/ 2>/dev/null || echo "000")
+  if [ "$STATUS" != "000" ]; then echo "Coral server is ready (HTTP $STATUS)"; break; fi
+  if [ $((i % 15)) -eq 0 ]; then echo "Still compiling... ($i/90)"; fi
+  sleep 2
+done
+```
+
+If the server does not respond after 3 minutes, check the build log for errors:
+```bash
+tail -30 ~/.coral/logs/coral-server.log
+```
+
+Common issues:
+- **Kotlin compilation error**: The patch in Step 3 may not have applied cleanly. Verify with `grep -c "sanitizeProperties" ~/.coral/coral-server/src/main/kotlin/org/coralprotocol/coralserver/mcp/McpToolManager.kt`
+- **Port 5555 already in use**: Another process is using the port. Run `lsof -ti:5555 | xargs kill` and retry.
+- **Java not installed**: Gradle requires JDK 17+. Check with `java -version`.
+
+Once the server responds, stop it (it will be started again later when agents are ready):
+```bash
+lsof -ti:5555 | xargs kill 2>/dev/null
+```
+
+Tell the user:
 - Where coral-server is located (`~/.coral/coral-server`)
-- How to start it: `cd ~/.coral/coral-server && ./gradlew run`
+- The server compiled and started successfully
+- How to start it manually: `cd ~/.coral/coral-server && ./gradlew run`
 - That it will be available at `http://localhost:5555` once started
 
 ## Step 6: Offer to install built-in agents
 
 After coral-server setup is complete, ask the user if they want to install and setup built-in agents (Claude Code, Hermes). Then read and follow the skill at `coral-built-in-agent-setup/SKILL.md` (sibling directory) to proceed with agent installation and setup.
 
-## Step 7: Offer to connect the user's own agent
-
-After built-in agent setup is complete (or if the user skips it), ask the user:
+Also ask the user:
 > Do you have your own agent project that you'd like to connect to Coral? I can help integrate it so it can participate in multi-agent sessions.
 
 If the user says yes, read and follow the sibling skill at `${SKILL_DIR}/../coralize-your-agent/SKILL.md` to walk them through the integration.

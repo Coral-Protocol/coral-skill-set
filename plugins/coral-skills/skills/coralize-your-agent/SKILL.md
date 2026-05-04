@@ -34,17 +34,18 @@ Wait for their response. The path should be an absolute path to a directory cont
 
 ## Step 2: Detect the agent framework
 
-Go to the provided path and identify the framework by checking for signature files:
+Go to the provided path and identify the framework. Check the path itself and its parent/child directories for signature files — the user may provide either the project root or a source subdirectory:
 
 ```bash
 AGENT_PATH="<user-provided-path>"
 echo "=== CHECKING FRAMEWORK ===" && \
-(test -f "$AGENT_PATH/package.json" && grep -l "@mastra" "$AGENT_PATH/package.json" && echo "FRAMEWORK: mastra") || \
+(test -f "$AGENT_PATH/package.json" && grep -q "@mastra" "$AGENT_PATH/package.json" && echo "FRAMEWORK: mastra") || \
+(test -f "$AGENT_PATH/index.ts" && grep -q "@mastra" "$AGENT_PATH/index.ts" && echo "FRAMEWORK: mastra (source dir)") || \
 echo "FRAMEWORK: unknown"
 ```
 
 Detection rules:
-- **Mastra**: `package.json` exists and contains `@mastra` dependencies
+- **Mastra**: `package.json` contains `@mastra` dependencies, OR `index.ts` imports from `@mastra` (source directory — the reference guide handles this case)
 - **Unknown**: If none of the above match, tell the user their framework isn't supported yet and list what is supported
 
 If the framework is detected, confirm with the user:
@@ -52,29 +53,15 @@ If the framework is detected, confirm with the user:
 
 Wait for confirmation before continuing.
 
-## Step 3: Scan for agents in the project
+## Step 3: Apply framework-specific integration
 
-Before applying framework-specific integration, scan the project to discover all agents.
+Based on the detected framework, read the corresponding reference guide and follow **all** its steps. The reference guide handles everything end-to-end: validating the project path, installing dependencies, scanning for agents, wiring coral tools, creating the coral worker entry point, checking API keys, and creating wrapper directories under `~/.coral/agents/`.
 
-**For Mastra**: Read the Mastra index file (typically `src/mastra/index.ts`) and look at the `agents: { ... }` object to find all registered agent keys. Also scan `src/mastra/agents/` for agent definition files to get agent names and descriptions.
+- **Mastra**: Read `${SKILL_DIR}/references/mastra.md` and follow all steps.
 
-Tell the user what agents were found:
-> I found N agents in your project:
-> - **agentKey1** — description
-> - **agentKey2** — description
-> - **agentKey3** — description
->
-> I'll set up each one as a separate Coral agent. Proceed?
+The reference guide will produce a list of agent wrapper paths under `~/.coral/agents/` — carry these forward to Step 4.
 
-Wait for confirmation. The user may want to exclude some agents.
-
-## Step 4: Apply framework-specific integration
-
-Based on the detected framework, read the corresponding reference guide and follow **all** its steps. The reference guide covers everything: installing dependencies, wiring coral tools into agents, creating the coral worker entry point, and creating wrapper directories under `~/.coral/agents/`.
-
-- **Mastra**: Read `${SKILL_DIR}/references/mastra.md` and follow Steps 1-7.
-
-## Step 5: Register in coral-server config
+## Step 4: Register in coral-server config
 
 Read `~/.coral/coral-server/src/main/resources/config.toml` and add **each** agent's wrapper path to the `local_agents` list under `[registry]`.
 
@@ -86,7 +73,7 @@ Example — if you set up 3 agents from a Mastra project:
 local_agents = [...existing..., "/Users/username/.coral/agents/weather-agent", "/Users/username/.coral/agents/coder-agent", "/Users/username/.coral/agents/researcher-agent"]
 ```
 
-## Step 6: Verify and report
+## Step 5: Verify and report
 
 Tell the user:
 - How many agents were discovered and set up
@@ -96,7 +83,7 @@ Tell the user:
 - The agents will be auto-launched by coral-server when a session requests them
 - They can still run their agents standalone without coral — the integration is additive
 
-## Step 7: Offer to try multi-agent orchestration
+## Step 6: Offer to try multi-agent orchestration
 
 After reporting the setup results, ask the user:
 > Would you like to try running these agents through Coral server? I can help you orchestrate a multi-agent session.

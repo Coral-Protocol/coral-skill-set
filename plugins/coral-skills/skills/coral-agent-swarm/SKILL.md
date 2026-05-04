@@ -92,6 +92,39 @@ curl -X POST http://localhost:5555/api/v1/local/session \
 ```
 Save the `sessionId` from the response.
 
+### Verify agent readiness
+
+After creating a session, **do not send messages immediately**. Poll the extended session endpoint until all agents reach `connected` status with communicationStatus of either `waiting_message` or `thinking`. Agents need time to start — built-in agents (claude-code, hermes) typically take 5-15 seconds, while Mastra agents may take 20-40 seconds (npm install + tsx compilation on first run).
+
+```bash
+for i in $(seq 1 45); do
+  RESPONSE=$(curl -s -X GET "http://localhost:5555/api/v1/local/session/demo/{sessionId}/extended" \
+    -H "Authorization: Bearer test")
+  # Parse agent statuses — check that all non-puppet agents are connected/waiting_message
+  # If any agent shows status.type == "stopped", it failed to start — abort and diagnose
+  sleep 2
+done
+```
+
+Check each agent's status path in the response JSON:
+- `status.type == "running"` + `status.connectionStatus.type == "connected"` + `status.connectionStatus.communicationStatus.type == "waiting_message"` → **ready**
+- `status.type == "running"` + `status.connectionStatus.type == "connected"` + `status.connectionStatus.communicationStatus.type == "thinking"` → **also ready** (the agent is connected and processing its initial `coral_wait_for_mention` call — it can receive messages)
+- `status.type == "running"` + `status.connectionStatus.type != "connected"` → **still starting**, keep polling
+- `status.type == "stopped"` → **failed to start**, diagnose immediately
+
+**Diagnosing stopped agents:** Check the coral-server log for stderr output:
+```bash
+grep "<agent-name>" ~/.coral/logs/coral-server.log | grep "stderr" | tail -10
+```
+
+Common failure causes:
+- `"Could not find API key"` → Missing env var in `.env` file (e.g., `OPENROUTER_API_KEY`)
+- `"Could not set lock on file mastra.duckdb"` → DuckDB conflict, per-agent storage paths not configured (see coralize-your-agent mastra.md Step 6)
+- `"Top-level await is currently not supported"` → tsx ESM resolution issue, likely symlinked source files
+- `"Cannot find module"` → `npm install` not run or missing dependency
+
+Report any stopped agents to the user with the error message before proceeding. Do NOT send messages to agents that are not yet connected. Agents in either `waiting_message` or `thinking` state are ready to receive messages — `thinking` means the agent is connected and processing its initial `coral_wait_for_mention` call, so it will pick up your message.
+
 ### Create Thread
 ```bash
 curl -X POST http://localhost:5555/api/v1/puppet/demo/{sessionId}/puppet-agent/thread \
@@ -141,8 +174,7 @@ curl -X DELETE http://localhost:5555/api/v1/local/session/demo/{sessionId} \
 ```
 **NOTE:** Closing the session does NOT kill external agent processes. After closing, also kill remaining processes:
 ```bash
-ps aux | grep -E "claude.*bypassPermissions|hermes" | grep -v grep
-kill <pid>
+ps aux | grep -E "claude.*bypassPermissions|hermes chat|coral-worker" | grep -v grep | awk '{print $2}' | xargs kill 2>/dev/null
 ```
 
 ## Agent Spawning
