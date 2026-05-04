@@ -90,12 +90,11 @@ local_agents = [...existing..., "/Users/username/.coral/agents/weather-agent", "
 
 Tell the user:
 - How many agents were discovered and set up
-- The wrapper directories created under `~/.coral/agents/`
-- That `coral-worker.ts` was created in their project (shared by all agents)
+- What files were created (in their project and under `~/.coral/agents/`)
 - That the agents are now registered with coral-server
 - To start (or restart) coral-server with: `cd ~/.coral/coral-server && ./gradlew run`
 - The agents will be auto-launched by coral-server when a session requests them
-- They can still run their agents standalone (e.g., `npm run dev` for Mastra) without coral — the coral integration is additive
+- They can still run their agents standalone without coral — the integration is additive
 
 ## Step 7: Offer to try multi-agent orchestration
 
