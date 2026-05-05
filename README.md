@@ -1,3 +1,4 @@
+(I created this branch to leave some notes via github's PR comments)
 # Coral Skill Set
 
 A [Claude Code plugin marketplace](https://code.claude.com/docs/en/plugin-marketplaces) for [Coral Protocol](https://github.com/Coral-Protocol) — set up a Coral server, install agents, and orchestrate multi-agent swarms from inside Claude Code.
