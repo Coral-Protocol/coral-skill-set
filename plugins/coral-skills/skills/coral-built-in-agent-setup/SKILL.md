@@ -1,13 +1,13 @@
 ---
 name: coral-built-in-agent-setup
-description: Install built-in agents (Claude Code, Hermes, Puppet) into the Coral Protocol environment. Use this skill after coral-server is set up and the user wants to add agents, or when the user says "install agents", "setup agents", "add claude-code agent", "add hermes agent", "built-in agents", "coral agents", or mentions setting up agents for Coral. Always trigger this skill after coral-setup completes to ask the user if they want to install built-in agents.
+description: Install built-in agents (Claude Code, Hermes, OpenClaw, Puppet) into the Coral Protocol environment. Use this skill after coral-server is set up and the user wants to add agents, or when the user says "install agents", "setup agents", "add claude-code agent", "add hermes agent", "add openclaw agent", "built-in agents", "coral agents", or mentions setting up agents for Coral. Always trigger this skill after coral-setup completes to ask the user if they want to install built-in agents.
 ---
 
 # Coral Built-in Agent Setup
 
 This skill installs built-in agents into `~/.coral/agents/` and registers them in the Coral server config.
 
-The bundled agent templates are in `${SKILL_DIR}/agents/` (claude-code, hermes, puppet).
+The bundled agent templates are in `${SKILL_DIR}/agents/` (claude-code, hermes, openclaw, puppet).
 
 ## Step 0: Check if coral-server is installed
 
@@ -27,6 +27,7 @@ Tell the user:
 > Available agents:
 > - **Claude Code** — an AI coding agent powered by Anthropic's Claude
 > - **Hermes** — a general-purpose AI agent by Nous Research
+> - **OpenClaw** — a personal AI agent with chat channel integrations
 >
 > (The **Puppet** test agent will be installed automatically.)
 
@@ -37,12 +38,13 @@ Wait for the user's response before proceeding.
 For each agent the user selected, check if the required CLI tool is installed:
 
 ```bash
-echo "=== CLAUDE CODE ===" && (claude --version 2>&1 || echo "NOT_INSTALLED") && echo "=== HERMES ===" && (hermes --version 2>&1 || echo "NOT_INSTALLED")
+echo "=== CLAUDE CODE ===" && (claude --version 2>&1 || echo "NOT_INSTALLED") && echo "=== HERMES ===" && (hermes --version 2>&1 || echo "NOT_INSTALLED") && echo "=== OPENCLAW ===" && (openclaw --version 2>&1 || echo "NOT_INSTALLED")
 ```
 
 Parse the output:
 - If Claude Code shows "NOT_INSTALLED", tell the user to install it first: https://code.claude.com/docs/en/overview
 - If Hermes shows "NOT_INSTALLED", tell the user to install it first: https://hermes-agent.nousresearch.com/docs/getting-started/installation
+- If OpenClaw shows "NOT_INSTALLED", tell the user to install it first: https://openclaw.ai/
 
 If any selected agent is missing its CLI, stop and wait for the user to install it, then re-check. Do NOT proceed until all selected agents have their CLIs available.
 
@@ -63,6 +65,9 @@ cp -r ${SKILL_DIR}/agents/claude-code ~/.coral/agents/claude-code
 
 # If user wants Hermes
 cp -r ${SKILL_DIR}/agents/hermes ~/.coral/agents/hermes
+
+# If user wants OpenClaw
+cp -r ${SKILL_DIR}/agents/openclaw ~/.coral/agents/openclaw
 ```
 
 Make startup scripts executable:
@@ -71,6 +76,7 @@ Make startup scripts executable:
 chmod +x ~/.coral/agents/puppet/startup.sh
 chmod +x ~/.coral/agents/claude-code/startup.sh  # if installed
 chmod +x ~/.coral/agents/hermes/startup.sh       # if installed
+chmod +x ~/.coral/agents/openclaw/startup.sh     # if installed
 ```
 
 ## Step 4: Update config.toml
@@ -82,12 +88,13 @@ The paths should use the user's actual home directory (expand `~`). Build the li
 - Always include: `"<HOME>/.coral/agents/puppet"`
 - If Claude Code installed: `"<HOME>/.coral/agents/claude-code"`
 - If Hermes installed: `"<HOME>/.coral/agents/hermes"`
+- If OpenClaw installed: `"<HOME>/.coral/agents/openclaw"`
 
 Example result in config.toml:
 
 ```toml
 [registry]
-local_agents = ["/Users/username/.coral/agents/claude-code", "/Users/username/.coral/agents/hermes", "/Users/username/.coral/agents/puppet"]
+local_agents = ["/Users/username/.coral/agents/claude-code", "/Users/username/.coral/agents/hermes", "/Users/username/.coral/agents/openclaw", "/Users/username/.coral/agents/puppet"]
 ```
 
 Use the Edit tool to update only the `local_agents` line. Do not modify any other part of config.toml.
@@ -97,7 +104,7 @@ Use the Edit tool to update only the `local_agents` line. Do not modify any othe
 Confirm the setup:
 
 ```bash
-echo "=== INSTALLED AGENTS ===" && ls -d ~/.coral/agents/claude-code ~/.coral/agents/hermes ~/.coral/agents/puppet 2>/dev/null && echo "=== CONFIG CHECK ===" && grep "local_agents" ~/.coral/coral-server/src/main/resources/config.toml
+echo "=== INSTALLED AGENTS ===" && ls -d ~/.coral/agents/claude-code ~/.coral/agents/hermes ~/.coral/agents/openclaw ~/.coral/agents/puppet 2>/dev/null && echo "=== CONFIG CHECK ===" && grep "local_agents" ~/.coral/coral-server/src/main/resources/config.toml
 ```
 
 Tell the user:
