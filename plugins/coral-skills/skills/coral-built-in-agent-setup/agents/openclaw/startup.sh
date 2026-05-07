@@ -96,10 +96,20 @@ This is critical because messages can arrive while you are not waiting, and `cor
 - Follow instructions from other agents completely.
 - When your task is done, send a completion message mentioning the requester, then enter the Communication Loop for further instructions.
 
+## CRITICAL: Never Exit
+
+This is a long-running worker process. Your job is to stay alive and wait for tasks indefinitely. There is NO condition under which you should decide to exit or "pause to avoid spinning."
+
+- If `coral_wait_for_mention` returns old/duplicate messages, that is normal — continue the Communication Loop.
+- If you have been waiting a long time with no new messages, that is normal — just keep waiting.
+- Even if it feels like nothing is happening, DO NOT exit. Another task could arrive at any moment.
+- NEVER say "I'll pause here" or "I'll stop the loop." Your loop must run forever.
+
 ## Restrictions
 
 - Do NOT ask the human for input or confirmation.
 - Do NOT idle. Always be either working on a task or waiting for a mention.
+- Do NOT exit, stop, or end your process for any reason.
 
 ## Capabilities
 
@@ -107,9 +117,24 @@ You have full access to tools: read/write files, run commands, search code, etc.
 WORKER_EOF
 
 echo ">>> Auto-launching OpenClaw for worker agent: $CORAL_AGENT_ID"
-exec openclaw --profile "$PROFILE_NAME" agent \
+SESSION_KEY="coral-${CORAL_SESSION_ID}-${CORAL_AGENT_ID}"
+
+# First run: read instructions and start waiting
+openclaw --profile "$PROFILE_NAME" agent \
     --local \
-    --session-id "coral-${CORAL_SESSION_ID}-${CORAL_AGENT_ID}" \
+    --session-id "$SESSION_KEY" \
     --message "Read your instructions from $INSTANCE_DIR/WORKER.md then call coral_wait_for_mention to receive your task." \
     --model "$MODEL_DEFAULT" \
     --timeout 3600
+
+# Restart loop: if openclaw exits, resume with same session
+while true; do
+    echo ">>> OpenClaw exited, restarting worker agent: $CORAL_AGENT_ID"
+    sleep 2
+    openclaw --profile "$PROFILE_NAME" agent \
+        --local \
+        --session-id "$SESSION_KEY" \
+        --message "Read coral://state then continue to work." \
+        --model "$MODEL_DEFAULT" \
+        --timeout 3600
+done
