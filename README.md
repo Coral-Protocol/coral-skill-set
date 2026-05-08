@@ -24,7 +24,7 @@ A [Claude Code plugin marketplace](https://code.claude.com/docs/en/plugin-market
 | `/coral-built-in-agent-setup` | Install built-in agents (Claude Code, Hermes, Puppet) |
 | `/coralize-your-agent` | Connect your own agent project to Coral (Mastra supported, more coming) |
 | `/coral-agent-swarm` | Orchestrate multi-agent sessions — spawn agents, send tasks, collect results |
-| `/coral-encyclopedia` | Coral Protocol knowledge hub — concepts, API reference, agent development patterns |
+| `/coral-encyclopedia` (Preview) | Coral Protocol knowledge hub — concepts, API reference, agent development patterns |
 
 ## Quick Start
 
