@@ -27,13 +27,6 @@ codex plugin marketplace add Coral-Protocol/coral-skill-set
 codex plugin add coral-skills@coral-skill-set
 ```
 
-For branch testing:
-
-```bash
-codex plugin marketplace add Coral-Protocol/coral-skill-set --ref agentskills-v2
-codex plugin add coral-skills@coral-skill-set
-```
-
 Confirm installation:
 
 ```bash
