@@ -5,7 +5,7 @@ description: Use when designing or reviewing how Coral agents should communicate
 
 # Coral Coordination Topologies
 
-Use established multi-agent communication patterns as references, then map them onto Coral primitives. Do not invent a topology from "agents can talk to each other" alone.
+Use this as communication vocabulary for mapping a required collaboration shape onto Coral primitives. It is not an app-design recommendation engine.
 
 ## Coral Primitives
 
@@ -17,11 +17,11 @@ Use established multi-agent communication patterns as references, then map them 
 - **Custom tools**: app boundary, not ordinary agent discussion.
 - **Puppet/API**: outside process or user proxy for session control.
 
-## Pick A Topology
+## Reference
 
 Read `references/topologies.md` when the user is choosing or evaluating a coordination structure.
 
-Quick selection:
+Fast mapping:
 
 | Need | Topology |
 |---|---|
@@ -33,10 +33,10 @@ Quick selection:
 | Event-driven loose coupling | Pub-sub/topic routing |
 | Task allocation among capable agents | Contract-net/task bidding |
 | Robust review or judgment | Debate/critique |
-| Localized transfer of control | Handoff/swarm |
+| Localized transfer of control | Handoff |
 
 ## Keep Integration Separate
 
-Topology is about agent-to-agent communication inside Coral. App integration is about who owns session lifecycle, callbacks, state, deployment, and billing.
+Topology is agent-to-agent communication inside a session. App integration is session ownership, callbacks, state, deployment, and billing.
 
 If the question asks about custom tools, conductors, Cloud, deployment, or app-owned state, also use `coral-app-integration`.

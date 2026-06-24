@@ -1,6 +1,6 @@
 {
   "name": "coral-skill-set",
-  "description": "Official Coral Protocol skills for setting up and orchestrating multi-agent swarms via Coral server",
+  "description": "Official Coral Protocol skills for runtime wiring, schema lookup, app integration, and session control",
   "owner": {
     "name": "Coral Protocol",
     "email": "contact@coralprotocol.org"
@@ -9,7 +9,7 @@
     {
       "name": "coral-skills",
       "source": "./plugins/coral-skills",
-      "description": "Coral Protocol setup, agent installation, and multi-agent swarm orchestration skills",
+      "description": "Coral Protocol setup, runtime reference, agent discovery, app integration, and session-control skills",
       "version": "1.0.0",
       "author": {
         "name": "Coral Protocol"
@@ -17,7 +17,7 @@
       "homepage": "https://github.com/Coral-Protocol/coral-skill-set",
       "repository": "https://github.com/Coral-Protocol/coral-skill-set",
       "license": "MIT",
-      "keywords": ["coral", "multi-agent", "swarm", "orchestration", "ai-agents"],
+      "keywords": ["coral", "coral-protocol", "mcp", "openapi", "ai-agents"],
       "category": "ai-agents"
     }
   ]

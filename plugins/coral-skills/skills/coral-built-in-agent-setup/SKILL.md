@@ -1,77 +1,69 @@
 ---
 name: coral-built-in-agent-setup
-description: Use when installing or refreshing bundled example Coral agents such as Claude Code, Hermes, OpenClaw, or Puppet, checking their CLI prerequisites, copying bundled agent templates, or making these local agents discoverable by a Coral Server.
+description: Use when installing, refreshing, or verifying the bundled Coral example agent templates in this plugin, including Puppet, Claude Code, Hermes, and OpenClaw local agent manifests.
 ---
 
 # Coral Built-In Agent Setup
 
-This skill installs bundled local agent templates. It should not assume a Coral Server source checkout exists.
+This skill copies packaged example agent manifests and startup scripts. It does not define the preferred application architecture.
 
 Bundled templates live in `${SKILL_DIR}/agents/`.
 
-## Check The Server Shape
+## Inputs
 
-If a server is running, establish its base URL and auth key, then verify:
+Choose which packaged templates to install:
+
+- `puppet`
+- `claude-code`
+- `hermes`
+- `openclaw`
+
+If a server is running, establish `BASE_URL` and `AUTH_KEY` and verify:
 
 ```bash
 curl -fsS "$BASE_URL/api_v1.json" >/dev/null
 ```
 
-If no server is running, installing templates is still possible, but registry verification must wait until a server is started with `coral-setup`.
+If no server is running, install templates first and verify discovery later.
 
-## Choose Agents
+## Prerequisites
 
-Puppet is the useful default for API-driven session control. Ask before installing the optional agents:
+Check the CLI for each selected template:
 
-- Puppet: lightweight HTTP proxy/test agent.
-- Claude Code: requires `claude`.
-- Hermes: requires `hermes`.
-- OpenClaw: requires `openclaw`.
-
-Check selected prerequisites:
-
-```bash
-echo "=== CLAUDE CODE ===" && (claude --version 2>&1 || echo "NOT_INSTALLED")
-echo "=== HERMES ===" && (hermes --version 2>&1 || echo "NOT_INSTALLED")
-echo "=== OPENCLAW ===" && (openclaw --version 2>&1 || echo "NOT_INSTALLED")
-```
-
-Stop if a selected agent's CLI is missing and tell the user what to install.
+| Template | Check |
+|---|---|
+| `claude-code` | `claude --version` |
+| `hermes` | `hermes --version` |
+| `openclaw` | `openclaw --version` |
+| `puppet` | inspect bundled `startup.sh` |
 
 ## Install Templates
 
-Install selected templates under `~/.coral/agents/`.
+Install selected templates under `~/.coral/agents/` unless the user asks for a project-local copy.
 
-Before overwriting an existing directory, inspect it and ask the user if they want to replace it. If installing fresh, copy the template contents into the destination directory:
+Before overwriting an existing destination, inspect it and ask the user if they want to replace it.
 
 ```bash
 mkdir -p ~/.coral/agents
-mkdir -p ~/.coral/agents/puppet
-cp -R "${SKILL_DIR}/agents/puppet/." ~/.coral/agents/puppet/
-chmod +x ~/.coral/agents/puppet/startup.sh
+AGENT_NAME="puppet"
+mkdir -p "$HOME/.coral/agents/$AGENT_NAME"
+cp -R "${SKILL_DIR}/agents/$AGENT_NAME/." "$HOME/.coral/agents/$AGENT_NAME/"
+chmod +x "$HOME/.coral/agents/$AGENT_NAME/startup.sh"
 ```
-
-Repeat the same copy/chmod pattern for selected optional agents:
-
-- `${SKILL_DIR}/agents/claude-code` -> `~/.coral/agents/claude-code`
-- `${SKILL_DIR}/agents/hermes` -> `~/.coral/agents/hermes`
-- `${SKILL_DIR}/agents/openclaw` -> `~/.coral/agents/openclaw`
 
 ## Make Agents Discoverable
 
-Prefer the server's current registry mechanics over editing a source checkout.
+Use one of the current server discovery paths:
 
-Options:
+- Coral home scan, if enabled by server config.
+- `[registry]` entries in the config file passed through `CONFIG_FILE_PATH`.
+- `npx @coral-protocol/coralizer@latest link .` when working from a template directory with `coral-agent.toml`.
 
-1. If the server config has `includeCoralHomeAgents = true` or default behavior scans Coral home agents, the copied templates should be discoverable.
-2. If the deployment owns a config file, add exact paths or globs under `[registry] localAgents` / `local_agents`.
-3. If the user wants a reproducible project-local setup, use `CONFIG_FILE_PATH` with a project-owned config file and include the bundled-agent paths there.
-
-Do not assume the config file is at `~/.coral/coral-server/src/main/resources/config.toml`.
+Do not edit a Coral Server source checkout to install agents unless the user explicitly asks to work on the server repo.
 
 ## Verify
 
-When a server is running, verify through the registry API or Console using the server's live docs:
+When a server is running, use the registry endpoint from its OpenAPI schema:
 
 ```bash
 curl -fsS "$BASE_URL/api/v1/registry" \
@@ -80,6 +72,4 @@ curl -fsS "$BASE_URL/api/v1/registry" \
 
 Confirm the installed agent names and versions appear before using them in a session template.
 
-## Next
-
-Use `coral-agent-swarm` only when the user wants to drive a concrete session through the API.
+Use `coral-session-control` only when the user wants to drive a concrete session through the API.

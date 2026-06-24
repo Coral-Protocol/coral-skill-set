@@ -1,13 +1,13 @@
 ---
 name: coralize-your-agent
-description: Use when connecting a developer-owned agent project to Coral, linking an existing coral-agent.toml, wrapping an MCP server or framework agent, choosing Coralizer versus registry config, or making an agent discoverable by a local or self-hosted Coral Server.
+description: Use when connecting a developer-owned agent project to Coral, linking an existing coral-agent.toml, wrapping an MCP server, choosing Coralizer versus registry config, or making an agent discoverable by Coral Server.
 ---
 
 # Coralize Your Agent
 
-Use current Coral agent/runtime specs as the source of truth. This skill should make an agent discoverable and runnable by Coral without making the app depend on this skill's local conventions.
+Use current Coral agent/runtime specs as the source of truth. The goal is discovery and runtime wiring, not framework-specific app rewrites.
 
-## Inputs To Establish
+## Inspect
 
 Ask for the agent project path if it is not already clear.
 
@@ -21,7 +21,7 @@ find "$AGENT_PATH" -maxdepth 3 -name coral-agent.toml -print
 
 If the user provided a source subdirectory, check parent/child directories before concluding there is no manifest.
 
-## Path A: Existing Coral Agent Manifest
+## Existing Manifest
 
 If the project already has `coral-agent.toml`, prefer one of these discovery mechanisms:
 
@@ -32,36 +32,30 @@ If the project already has `coral-agent.toml`, prefer one of these discovery mec
 
 After linking or configuring, verify through the server registry endpoint or Console rather than assuming the agent loaded.
 
-## Path B: Existing MCP Server Or Tool Process
+## MCP Server Or Tool Process
 
-If the project exposes an MCP server, use Coralizer's MCP wrapping flow from the current Coralizer docs.
+If the project exposes an MCP server, use the current Coralizer MCP wrapping flow.
 
-General shape:
+General sequence:
 
 1. Prepare an MCP server description JSON.
 2. Run Coralizer to scaffold a Coral agent project.
 3. Edit the generated `coral-agent.toml`.
 4. Link the generated agent or add it to server config.
 
-Do not hardcode one framework if Coralizer or the current docs support a better path.
+Verify exact commands against current Coralizer help or docs before running them.
 
-## Path C: Framework-Specific Adapter
+## No Manifest
 
-If no manifest exists and the project is a supported framework, use the relevant reference.
+If no manifest exists and the project is not an MCP server:
 
-Current bundled reference:
+1. Fetch the current server schema with `coral-runtime-reference`.
+2. Read current Coral agent manifest/runtime docs from the running server or source checkout.
+3. Add the smallest wrapper or entrypoint needed for the agent runtime to connect to Coral's MCP URL/secret.
+4. Add `coral-agent.toml`.
+5. Make the manifest discoverable through Coralizer link or config registry.
 
-- Mastra: read `${SKILL_DIR}/references/mastra.md`
-
-Framework-specific adapters may create wrapper files, worker entrypoints, or startup scripts. Keep those changes additive: the original agent should still be understandable and runnable outside Coral where practical.
-
-## Path D: Unsupported Framework
-
-If no supported adapter exists:
-
-1. Use `coral-encyclopedia` for `docs/guides/writing-agents.md` and `docs/reference/agent-config.md`.
-2. Explain the minimal Coral contract: the agent runtime must connect to the Coral-provided MCP URL/secret and declare a valid `coral-agent.toml`.
-3. Offer a small wrapper approach instead of editing the core agent deeply.
+Do not import framework-specific steps from memory. Use the user's repo and current Coral docs/source.
 
 ## Verification
 
@@ -79,7 +73,6 @@ Do not assume:
 - Cloud can host arbitrary developer-owned agents;
 - one app-specific callback tool exists;
 - one conductor backend exists;
-- all agents should be copied into `~/.coral/agents`;
-- a server source checkout exists under `~/.coral/coral-server`.
+- all agents should be copied into `~/.coral/agents`.
 
 Use `coral-app-integration` for app/conductor/cloud boundaries and `coral-setup` for server configuration.

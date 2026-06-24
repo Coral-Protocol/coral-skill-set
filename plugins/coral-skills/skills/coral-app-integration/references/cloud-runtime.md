@@ -1,8 +1,8 @@
-# Coral Cloud Runtime Notes
+# Coral Cloud Runtime Boundary
 
-This file captures Cloud-specific behavior that affects agents and app integrations. Verify against current Cloud docs/source when exact availability matters.
+Verify Cloud behavior against current Cloud docs/source before making exact availability claims.
 
-## Current Capability Boundary
+## Current Boundary
 
 Do not assume Coral Cloud can host arbitrary developer-owned agents. Current practical modes are:
 
@@ -14,7 +14,7 @@ Treat developer-owned agent hosting on Coral Cloud as a version-sensitive capabi
 
 ## API Keys
 
-Cloud requests use Coral API keys as bearer credentials:
+Cloud requests use Coral API keys as bearer credentials where Cloud APIs are involved:
 
 ```http
 Authorization: Bearer coral_...
@@ -24,30 +24,20 @@ Never commit API keys. Prefer environment variables or the user's secret manager
 
 ## LLM Proxy
 
-The Coral LLM proxy is Cloud-relevant even when agents are self-hosted.
+The Coral LLM proxy can matter even when agents are self-hosted.
 
 - A Coral Cloud API key can add Coral Cloud-backed model providers to the server's proxy resolution path.
 - Server `[llm-proxy]` providers can target OpenRouter or other provider-compatible endpoints.
-- Agents receive proxy URLs through Coral-provided environment variables when their manifest declares LLM proxy needs.
-- Use the proxy when Cloud billing/centralized model access is intended.
-- Use direct provider keys only when the deployment intentionally bypasses Cloud proxy behavior.
+- Agents receive proxy URLs through Coral-provided runtime environment when their manifest declares proxy needs.
 
 ## Cloud Sessions And Billing
 
-Cloud may enforce budget settings, balance checks, tenant namespace rewriting, and Cloud-owned lifecycle hooks.
+Cloud may enforce budget settings, balance checks, tenant namespace rewriting, and Cloud-owned lifecycle hooks. Treat these as runtime constraints, not app architecture guidance.
 
 When a Cloud session fails before agents start, check auth, balance, budget settings, and agent availability before debugging custom tools or agent code.
 
 ## Cloud Custom Tools
 
-Cloud custom tools follow the same conceptual pattern as self-hosted custom tools but add app registration and hostname verification.
+Cloud custom tools follow the same conceptual pattern as self-hosted custom tools but may add app registration, hostname verification, proxying, and Cloud-side signing.
 
-Expect Cloud to:
-
-- validate application hostnames;
-- rewrite custom tool URLs through a Cloud proxy;
-- append session and agent path parameters;
-- forward Coral headers;
-- sign payloads for the registered application secret.
-
-Use Cloud custom tools for agent-to-app callbacks. Do not rely on user-specified session-end webhooks as the main app result path when Cloud owns lifecycle hooks.
+Use the current Cloud API/schema/source for exact headers, URL rewriting, and signature rules.

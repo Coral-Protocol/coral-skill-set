@@ -1,5 +1,5 @@
 {
   "name": "coral-skills",
-  "description": "Coral Protocol runtime wiring, app integration, setup, and multi-agent coordination skills",
+  "description": "Coral Protocol runtime wiring, API source lookup, app integration, and session-control skills",
   "version": "1.0.0"
 }

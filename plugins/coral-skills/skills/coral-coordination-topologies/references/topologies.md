@@ -1,6 +1,6 @@
 # Multi-Agent Topologies For Coral
 
-Use these as design references. They are not Coral product requirements.
+Use these as communication vocabulary. Pick only when the user's problem or repo already implies the shape.
 
 ## Peer / Network Graph
 
@@ -12,10 +12,6 @@ Map to Coral:
 - Let agents create threads for subtopics.
 - Use mentions to route work and wake agents.
 
-Use for exploratory research, creative synthesis, and tasks without a fixed decomposition.
-
-Watch for context sprawl, duplicated work, and unclear termination.
-
 ## Supervisor
 
 A manager agent delegates to workers and synthesizes results.
@@ -24,11 +20,7 @@ Map to Coral:
 
 - Put the supervisor in groups with all workers.
 - Workers may only need threads with the supervisor.
-- Give the supervisor responsibility for closing threads or calling final custom tools.
-
-Use for controllability, auditability, or user-facing orchestration.
-
-Watch for supervisor bottlenecks and lossy summarization of worker results.
+- If final callbacks exist, grant them through explicit custom tool access.
 
 ## Hierarchical Teams
 
@@ -38,11 +30,6 @@ Map to Coral:
 
 - Use groups to encode subteam visibility.
 - Use separate threads for subteam work and cross-team handoff.
-- Keep final synthesis owned by a top-level manager or app conductor.
-
-Use for broad tasks with separable workstreams.
-
-Watch for slow escalation and over-summarized intermediate context.
 
 ## Pipeline
 
@@ -50,13 +37,9 @@ Work moves through fixed stages.
 
 Map to Coral:
 
-- The app conductor or a manager agent creates stage-specific threads.
-- Each stage has explicit entry criteria and output shape.
-- Custom tools or app state can enforce stage gates.
-
-Use for compliance, extraction, enrichment, deterministic review, and repeatable production workflows.
-
-Watch for brittle handoffs when upstream output is ambiguous.
+- A conductor or manager creates stage-specific threads.
+- Stage gates live in the app, manager agent, or custom tools.
+- Durable stage state should be external if it must outlive the session.
 
 ## Blackboard
 
@@ -68,10 +51,6 @@ Map to Coral:
 - Expose read/write operations through custom tools or app APIs.
 - Use threads for negotiation and explanation around blackboard updates.
 
-Use for open-ended problem solving with partial hypotheses, evidence, or artifacts.
-
-Watch for conflict resolution, stale reads, and unclear ownership of final state.
-
 ## Pub-Sub / Topic Routing
 
 Agents publish and react to topic-specific events.
@@ -81,10 +60,6 @@ Map to Coral:
 - Use threads as topic channels.
 - Use mentions or app/Puppet messages as deterministic wake-up signals.
 - Consider one topic per durable workstream rather than one giant thread.
-
-Use for event-driven flows and loosely coupled specialists.
-
-Watch for missed wake-ups if agents rely on passive reading instead of waits/mentions.
 
 ## Contract-Net / Task Bidding
 
@@ -96,10 +71,6 @@ Map to Coral:
 - Candidate agents reply with capability/cost/plan.
 - Announcer mentions selected agents and records the award.
 
-Use when capability, cost, or load varies by agent.
-
-Watch for negotiation overhead on small tasks.
-
 ## Debate / Critique
 
 Agents produce independent arguments or reviews before synthesis.
@@ -110,11 +81,7 @@ Map to Coral:
 - Use a judge/synthesizer agent or app conductor to decide.
 - Preserve dissent if the output is audit-sensitive.
 
-Use for design review, risk analysis, adversarial reasoning, and quality gates.
-
-Watch for performative disagreement and runaway rounds.
-
-## Handoff / Swarm
+## Handoff
 
 Agents locally decide which agent should take over next.
 
@@ -123,10 +90,6 @@ Map to Coral:
 - Encode allowed handoffs in agent prompts/descriptions.
 - Use mentions as transfer signals.
 - Keep a visible thread trail of why control moved.
-
-Use when local expertise should determine routing.
-
-Watch for loops and loss of termination criteria.
 
 ## External References
 
