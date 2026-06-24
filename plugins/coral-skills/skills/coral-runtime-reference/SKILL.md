@@ -14,7 +14,8 @@ For API shape, use this order:
 1. Target running server: `GET $BASE_URL/api_v1.json`.
 2. Latest public docs snapshot: `GET https://docs.coralos.ai/api_v1.json`.
 3. Local `coral-server` checkout source when generated schema and behavior disagree.
-4. DeepWiki for repository orientation only, never as schema authority.
+4. Local Cloud source or schema only when the user explicitly has access and the question is Cloud-specific.
+5. DeepWiki for repository orientation only, never as schema authority.
 
 `$BASE_URL/ui/docs` is the human Scalar UI over `$BASE_URL/api_v1.json`. Use it when the user asks for docs, but prefer the raw JSON for agent work.
 
@@ -37,6 +38,14 @@ When exact payloads matter:
 - record whether the schema came from local runtime or hosted docs.
 
 Do not paste large OpenAPI documents into the conversation. Extract only the endpoint, method, schema, or field needed for the current task.
+
+## Cloud Schema Stance
+
+Use `https://docs.coralos.ai/api_v1.json` as the public machine-readable baseline for Cloud-facing work when no running target server schema is available.
+
+Cloud Console exports and Cloud runtime behavior can temporarily include fields not yet present in the public schema. Do not strip or reject unknown fields from user-provided Cloud payloads solely because the public snapshot omits them. Preserve fields such as `budgetSettings`, `x402Budgets`, `plugins`, `annotations`, and execution settings unless live validation rejects them.
+
+For Cloud invocation, marketplace agents, billing, LLM proxy, or custom-tool callback behavior, also use `coral-app-integration`.
 
 ## Source Fallback
 

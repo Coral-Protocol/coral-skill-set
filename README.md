@@ -49,7 +49,7 @@ codex plugin list --marketplace coral-skill-set
 | `/coralize-your-agent` | Link or wrap a developer-owned agent for Coral discovery |
 | `/coral-built-in-agent-setup` | Copy and verify packaged example agent templates |
 | `/coral-session-control` | Operate Coral sessions through REST, Puppet, events, and extended state |
-| `/coral-app-integration` | Identify app, conductor, Cloud, custom-tool, and durable-state boundaries |
+| `/coral-app-integration` | Identify app, conductor, Cloud Console, marketplace-agent, custom-tool, and durable-state boundaries |
 | `/coral-coordination-topologies` | Map communication topology vocabulary onto Coral session primitives |
 
 ## Getting Started
@@ -60,6 +60,8 @@ codex plugin list --marketplace coral-skill-set
 4. Use `/coral-app-integration` when the question crosses into app-owned state, callbacks, Cloud, or deployment.
 5. Use `/coral-coordination-topologies` only when the communication structure itself is the question.
 6. Use `/coral-session-control` when operating a concrete session through HTTP/Puppet APIs.
+
+For Cloud Console exports or marketplace agents, `/coral-app-integration` routes agents to the Cloud runtime and custom-tool callback checklists without copying the full Cloud API schema into the skillset.
 
 ## Prerequisites
 

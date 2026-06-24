@@ -1,11 +1,11 @@
 ---
 name: coral-app-integration
-description: Use when wiring Coral into an application, backend, conductor service, self-hosted deployment, Cloud-assisted flow, custom tools callback, session lifecycle manager, LLM proxy, API key, billing, or app-owned state boundary.
+description: Use when wiring Coral into an application, backend, conductor service, self-hosted deployment, Cloud-assisted flow, Cloud Console session payload, marketplace agent, custom tools callback, APP_BASE_URL/CORAL_APPLICATION_ID/CORAL_CUSTOM_TOOL_SECRET variables, session lifecycle manager, LLM proxy, API key, billing, or app-owned state boundary.
 ---
 
 # Coral App Integration
 
-Use this skill to identify integration boundaries. It should not prescribe product architecture.
+Use this skill to identify integration boundaries and runtime wiring. It should not prescribe product architecture.
 
 ## Load Only What Applies
 
@@ -14,10 +14,22 @@ Read only the reference that matches the user's question:
 | Question | Read |
 |---|---|
 | Session ownership, app state, conductor process, self-hosting | `references/setup-patterns.md` |
-| Agent-to-app callbacks or app tools | `references/custom-tools.md` |
-| Cloud API key, LLM proxy, billing, marketplace/cloud runtime | `references/cloud-runtime.md` |
+| Agent-to-app callbacks, app tools, `customTools`, `customToolAccess`, callback signatures | `references/custom-tools.md` |
+| Cloud API key, LLM proxy, billing, marketplace agents, Cloud Console payloads, Cloud runtime | `references/cloud-runtime.md` |
 
 When exact request/response schemas matter, use `coral-runtime-reference` and the running server's `/api_v1.json`.
+
+## Cloud Signals
+
+Treat these as Cloud-specific routing signals:
+
+- `CORAL_CLOUD_API_URL` or `CORAL_API_KEY`;
+- `registrySourceId.type: "marketplace"` in an agent id;
+- a Cloud Console exported `SessionRequest` or `agentGraphRequest`;
+- `APP_BASE_URL`, `CORAL_APPLICATION_ID`, or `CORAL_CUSTOM_TOOL_SECRET`;
+- user language about marketplace agents, hosted agents, billing, balance, or the Cloud LLM proxy.
+
+When a request has both Cloud and custom-tool signals, read both `cloud-runtime.md` and `custom-tools.md`.
 
 ## Integration Boundaries
 
