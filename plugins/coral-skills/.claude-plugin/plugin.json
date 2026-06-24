@@ -1,5 +1,5 @@
 {
   "name": "coral-skills",
-  "description": "Coral Protocol setup, agent installation, and multi-agent swarm orchestration skills",
+  "description": "Coral Protocol runtime wiring, app integration, setup, and multi-agent coordination skills",
   "version": "1.0.0"
 }

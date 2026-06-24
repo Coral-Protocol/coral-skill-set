@@ -1,121 +1,85 @@
 ---
 name: coral-built-in-agent-setup
-description: Install built-in agents (Claude Code, Hermes, OpenClaw, Puppet) into the Coral Protocol environment. Use this skill after coral-server is set up and the user wants to add agents, or when the user says "install agents", "setup agents", "add claude-code agent", "add hermes agent", "add openclaw agent", "built-in agents", "coral agents", or mentions setting up agents for Coral. Always trigger this skill after coral-setup completes to ask the user if they want to install built-in agents.
+description: Use when installing or refreshing bundled example Coral agents such as Claude Code, Hermes, OpenClaw, or Puppet, checking their CLI prerequisites, copying bundled agent templates, or making these local agents discoverable by a Coral Server.
 ---
 
-# Coral Built-in Agent Setup
+# Coral Built-In Agent Setup
 
-This skill installs built-in agents into `~/.coral/agents/` and registers them in the Coral server config.
+This skill installs bundled local agent templates. It should not assume a Coral Server source checkout exists.
 
-The bundled agent templates are in `${SKILL_DIR}/agents/` (claude-code, hermes, openclaw, puppet).
+Bundled templates live in `${SKILL_DIR}/agents/`.
 
-## Step 0: Check if coral-server is installed
+## Check The Server Shape
 
-First, verify that coral-server exists:
-
-```bash
-test -f ~/.coral/coral-server/gradlew && echo "CORAL_SERVER_OK" || echo "CORAL_SERVER_NOT_FOUND"
-```
-
-- If "CORAL_SERVER_OK" → proceed to Step 1.
-- If "CORAL_SERVER_NOT_FOUND" → tell the user that coral-server must be installed first, then read and follow the sibling skill `coral-setup/SKILL.md` to set it up. After coral-server setup completes, come back here and continue from Step 1.
-
-## Step 1: Ask the user which agents to install
-
-Tell the user:
-> Coral server is ready. Would you like to install built-in agents?
-> Available agents:
-> - **Claude Code** — an AI coding agent powered by Anthropic's Claude
-> - **Hermes** — a general-purpose AI agent by Nous Research
-> - **OpenClaw** — a personal AI agent with chat channel integrations
->
-> (The **Puppet** test agent will be installed automatically.)
-
-Wait for the user's response before proceeding.
-
-## Step 2: Check prerequisites
-
-For each agent the user selected, check if the required CLI tool is installed:
+If a server is running, establish its base URL and auth key, then verify:
 
 ```bash
-echo "=== CLAUDE CODE ===" && (claude --version 2>&1 || echo "NOT_INSTALLED") && echo "=== HERMES ===" && (hermes --version 2>&1 || echo "NOT_INSTALLED") && echo "=== OPENCLAW ===" && (openclaw --version 2>&1 || echo "NOT_INSTALLED")
+curl -fsS "$BASE_URL/api_v1.json" >/dev/null
 ```
 
-Parse the output:
-- If Claude Code shows "NOT_INSTALLED", tell the user to install it first: https://code.claude.com/docs/en/overview
-- If Hermes shows "NOT_INSTALLED", tell the user to install it first: https://hermes-agent.nousresearch.com/docs/getting-started/installation
-- If OpenClaw shows "NOT_INSTALLED", tell the user to install it first: https://openclaw.ai/
+If no server is running, installing templates is still possible, but registry verification must wait until a server is started with `coral-setup`.
 
-If any selected agent is missing its CLI, stop and wait for the user to install it, then re-check. Do NOT proceed until all selected agents have their CLIs available.
+## Choose Agents
 
-Puppet has no prerequisites — it only uses `curl` and `bash`.
+Puppet is the useful default for API-driven session control. Ask before installing the optional agents:
 
-## Step 3: Deploy agents to ~/.coral/agents/
+- Puppet: lightweight HTTP proxy/test agent.
+- Claude Code: requires `claude`.
+- Hermes: requires `hermes`.
+- OpenClaw: requires `openclaw`.
 
-Create the agents directory and copy from the skill's bundled templates. For each agent to install (user-selected ones + puppet which is always installed):
+Check selected prerequisites:
+
+```bash
+echo "=== CLAUDE CODE ===" && (claude --version 2>&1 || echo "NOT_INSTALLED")
+echo "=== HERMES ===" && (hermes --version 2>&1 || echo "NOT_INSTALLED")
+echo "=== OPENCLAW ===" && (openclaw --version 2>&1 || echo "NOT_INSTALLED")
+```
+
+Stop if a selected agent's CLI is missing and tell the user what to install.
+
+## Install Templates
+
+Install selected templates under `~/.coral/agents/`.
+
+Before overwriting an existing directory, inspect it and ask the user if they want to replace it. If installing fresh, copy the template contents into the destination directory:
 
 ```bash
 mkdir -p ~/.coral/agents
-
-# Always install puppet
-cp -r ${SKILL_DIR}/agents/puppet ~/.coral/agents/puppet
-
-# If user wants Claude Code
-cp -r ${SKILL_DIR}/agents/claude-code ~/.coral/agents/claude-code
-
-# If user wants Hermes
-cp -r ${SKILL_DIR}/agents/hermes ~/.coral/agents/hermes
-
-# If user wants OpenClaw
-cp -r ${SKILL_DIR}/agents/openclaw ~/.coral/agents/openclaw
-```
-
-Make startup scripts executable:
-
-```bash
+mkdir -p ~/.coral/agents/puppet
+cp -R "${SKILL_DIR}/agents/puppet/." ~/.coral/agents/puppet/
 chmod +x ~/.coral/agents/puppet/startup.sh
-chmod +x ~/.coral/agents/claude-code/startup.sh  # if installed
-chmod +x ~/.coral/agents/hermes/startup.sh       # if installed
-chmod +x ~/.coral/agents/openclaw/startup.sh     # if installed
 ```
 
-## Step 4: Update config.toml
+Repeat the same copy/chmod pattern for selected optional agents:
 
-Read `~/.coral/coral-server/src/main/resources/config.toml` and update the `local_agents` list under `[registry]` to point to the new `~/.coral/` paths.
+- `${SKILL_DIR}/agents/claude-code` -> `~/.coral/agents/claude-code`
+- `${SKILL_DIR}/agents/hermes` -> `~/.coral/agents/hermes`
+- `${SKILL_DIR}/agents/openclaw` -> `~/.coral/agents/openclaw`
 
-The paths should use the user's actual home directory (expand `~`). Build the list based on what was installed:
+## Make Agents Discoverable
 
-- Always include: `"<HOME>/.coral/agents/puppet"`
-- If Claude Code installed: `"<HOME>/.coral/agents/claude-code"`
-- If Hermes installed: `"<HOME>/.coral/agents/hermes"`
-- If OpenClaw installed: `"<HOME>/.coral/agents/openclaw"`
+Prefer the server's current registry mechanics over editing a source checkout.
 
-Example result in config.toml:
+Options:
 
-```toml
-[registry]
-local_agents = ["/Users/username/.coral/agents/claude-code", "/Users/username/.coral/agents/hermes", "/Users/username/.coral/agents/openclaw", "/Users/username/.coral/agents/puppet"]
-```
+1. If the server config has `includeCoralHomeAgents = true` or default behavior scans Coral home agents, the copied templates should be discoverable.
+2. If the deployment owns a config file, add exact paths or globs under `[registry] localAgents` / `local_agents`.
+3. If the user wants a reproducible project-local setup, use `CONFIG_FILE_PATH` with a project-owned config file and include the bundled-agent paths there.
 
-Use the Edit tool to update only the `local_agents` line. Do not modify any other part of config.toml.
+Do not assume the config file is at `~/.coral/coral-server/src/main/resources/config.toml`.
 
-## Step 5: Verify and report
+## Verify
 
-Confirm the setup:
+When a server is running, verify through the registry API or Console using the server's live docs:
 
 ```bash
-echo "=== INSTALLED AGENTS ===" && ls -d ~/.coral/agents/claude-code ~/.coral/agents/hermes ~/.coral/agents/openclaw ~/.coral/agents/puppet 2>/dev/null && echo "=== CONFIG CHECK ===" && grep "local_agents" ~/.coral/coral-server/src/main/resources/config.toml
+curl -fsS "$BASE_URL/api/v1/registry" \
+  -H "Authorization: Bearer $AUTH_KEY"
 ```
 
-Tell the user:
-- Which agents were installed and where
-- That puppet was auto-installed as a test agent
-- To start the server with `cd ~/.coral/coral-server && ./gradlew run` if not already running
-- Agents will auto-register when the server starts
+Confirm the installed agent names and versions appear before using them in a session template.
 
-## Step 6: Offer to try multi-agent orchestration
+## Next
 
-After reporting the setup results, ask the user:
-> Would you like to try running these agents through Coral server? I can help you orchestrate a multi-agent session.
-
-If the user says yes, read the sibling skill at `${SKILL_DIR}/../coral-agent-swarm/SKILL.md` and follow its instructions to set up and run a multi-agent session.
+Use `coral-agent-swarm` only when the user wants to drive a concrete session through the API.

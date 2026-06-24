@@ -1,91 +1,85 @@
 ---
 name: coralize-your-agent
-description: Connect any AI agent project to the Coral Protocol multi-agent network. Use this skill when the user wants to "coralize" an agent, "connect to coral", "add my agent to coral", "register agent with coral", "make my agent work with coral", "coral integration", "coral MCP setup", or mentions integrating their own custom agent (not a built-in one) with Coral Protocol. Currently supports Mastra framework agents, with more frameworks coming soon.
+description: Use when connecting a developer-owned agent project to Coral, linking an existing coral-agent.toml, wrapping an MCP server or framework agent, choosing Coralizer versus registry config, or making an agent discoverable by a local or self-hosted Coral Server.
 ---
 
 # Coralize Your Agent
 
-This skill walks the user through connecting their existing AI agent project to the Coral Protocol, so it can participate in multi-agent sessions alongside other Coral-connected agents.
+Use current Coral agent/runtime specs as the source of truth. This skill should make an agent discoverable and runnable by Coral without making the app depend on this skill's local conventions.
 
-A single project may contain multiple agents. Each agent gets its own wrapper directory under `~/.coral/agents/<agent-name>/` with a `coral-agent.toml` and `startup.sh`, while the actual agent code stays in the user's project.
+## Inputs To Establish
 
-Currently supported frameworks:
-- **Mastra** (TypeScript)
+Ask for the agent project path if it is not already clear.
 
-More frameworks will be added over time.
-
-## Step 0: Check if coral-server is installed
-
-First, verify that coral-server exists:
+Then inspect:
 
 ```bash
-test -f ~/.coral/coral-server/gradlew && echo "CORAL_SERVER_OK" || echo "CORAL_SERVER_NOT_FOUND"
+test -f "$AGENT_PATH/coral-agent.toml" && echo "HAS_CORAL_AGENT_TOML" || echo "NO_CORAL_AGENT_TOML"
+test -f "$AGENT_PATH/package.json" && echo "HAS_PACKAGE_JSON" || true
+find "$AGENT_PATH" -maxdepth 3 -name coral-agent.toml -print
 ```
 
-- If "CORAL_SERVER_OK" -> proceed to Step 1.
-- If "CORAL_SERVER_NOT_FOUND" -> tell the user that coral-server must be installed first, then read and follow the sibling skill `coral-setup/SKILL.md` to set it up. After coral-server setup completes, come back here and continue from Step 1.
+If the user provided a source subdirectory, check parent/child directories before concluding there is no manifest.
 
-## Step 1: Ask for the agent project path
+## Path A: Existing Coral Agent Manifest
 
-Ask the user:
-> What's the path to your agent project?
+If the project already has `coral-agent.toml`, prefer one of these discovery mechanisms:
 
-Wait for their response. The path should be an absolute path to a directory containing an agent project.
+| Mechanism | Use when |
+|---|---|
+| `npx @coral-protocol/coralizer@latest link .` | Developer wants the agent available to local Coral Servers on this machine. |
+| `[registry] localAgents = [...]` in a config file | App, CI, VM, or container deployment should own exactly which agent paths the server scans. |
 
-## Step 2: Detect the agent framework
+After linking or configuring, verify through the server registry endpoint or Console rather than assuming the agent loaded.
 
-Go to the provided path and identify the framework. Check the path itself and its parent/child directories for signature files — the user may provide either the project root or a source subdirectory:
+## Path B: Existing MCP Server Or Tool Process
 
-```bash
-AGENT_PATH="<user-provided-path>"
-echo "=== CHECKING FRAMEWORK ===" && \
-(test -f "$AGENT_PATH/package.json" && grep -q "@mastra" "$AGENT_PATH/package.json" && echo "FRAMEWORK: mastra") || \
-(test -f "$AGENT_PATH/index.ts" && grep -q "@mastra" "$AGENT_PATH/index.ts" && echo "FRAMEWORK: mastra (source dir)") || \
-echo "FRAMEWORK: unknown"
-```
+If the project exposes an MCP server, use Coralizer's MCP wrapping flow from the current Coralizer docs.
 
-Detection rules:
-- **Mastra**: `package.json` contains `@mastra` dependencies, OR `index.ts` imports from `@mastra` (source directory — the reference guide handles this case)
-- **Unknown**: If none of the above match, tell the user their framework isn't supported yet and list what is supported
+General shape:
 
-If the framework is detected, confirm with the user:
-> I detected this is a **Mastra** agent project. I'll set it up for Coral integration. Proceed?
+1. Prepare an MCP server description JSON.
+2. Run Coralizer to scaffold a Coral agent project.
+3. Edit the generated `coral-agent.toml`.
+4. Link the generated agent or add it to server config.
 
-Wait for confirmation before continuing.
+Do not hardcode one framework if Coralizer or the current docs support a better path.
 
-## Step 3: Apply framework-specific integration
+## Path C: Framework-Specific Adapter
 
-Based on the detected framework, read the corresponding reference guide and follow **all** its steps. The reference guide handles everything end-to-end: validating the project path, installing dependencies, scanning for agents, wiring coral tools, creating the coral worker entry point, checking API keys, and creating wrapper directories under `~/.coral/agents/`.
+If no manifest exists and the project is a supported framework, use the relevant reference.
 
-- **Mastra**: Read `${SKILL_DIR}/references/mastra.md` and follow all steps.
+Current bundled reference:
 
-The reference guide will produce a list of agent wrapper paths under `~/.coral/agents/` — carry these forward to Step 4.
+- Mastra: read `${SKILL_DIR}/references/mastra.md`
 
-## Step 4: Register in coral-server config
+Framework-specific adapters may create wrapper files, worker entrypoints, or startup scripts. Keep those changes additive: the original agent should still be understandable and runnable outside Coral where practical.
 
-Read `~/.coral/coral-server/src/main/resources/config.toml` and add **each** agent's wrapper path to the `local_agents` list under `[registry]`.
+## Path D: Unsupported Framework
 
-Use the Edit tool to update only the `local_agents` line. Do not modify any other part of config.toml. Make sure not to add duplicates — check if any paths are already in the list first.
+If no supported adapter exists:
 
-Example — if you set up 3 agents from a Mastra project:
+1. Use `coral-encyclopedia` for `docs/guides/writing-agents.md` and `docs/reference/agent-config.md`.
+2. Explain the minimal Coral contract: the agent runtime must connect to the Coral-provided MCP URL/secret and declare a valid `coral-agent.toml`.
+3. Offer a small wrapper approach instead of editing the core agent deeply.
 
-```toml
-local_agents = [...existing..., "/Users/username/.coral/agents/weather-agent", "/Users/username/.coral/agents/coder-agent", "/Users/username/.coral/agents/researcher-agent"]
-```
+## Verification
 
-## Step 5: Verify and report
+After any integration:
 
-Tell the user:
-- How many agents were discovered and set up
-- What files were created (in their project and under `~/.coral/agents/`)
-- That the agents are now registered with coral-server
-- To start (or restart) coral-server with: `cd ~/.coral/coral-server && ./gradlew run`
-- The agents will be auto-launched by coral-server when a session requests them
-- They can still run their agents standalone without coral — the integration is additive
+- Confirm the agent path has a valid `coral-agent.toml`.
+- Confirm the server can see the agent in its registry.
+- Create a minimal session only if the user wants a runtime smoke.
+- If the smoke is run, close the session afterward.
 
-## Step 6: Offer to try multi-agent orchestration
+## Boundaries
 
-After reporting the setup results, ask the user:
-> Would you like to try running these agents through Coral server? I can help you orchestrate a multi-agent session.
+Do not assume:
 
-If the user says yes, read the sibling skill at `${SKILL_DIR}/../coral-agent-swarm/SKILL.md` and follow its instructions to set up and run a multi-agent session.
+- Cloud can host arbitrary developer-owned agents;
+- one app-specific callback tool exists;
+- one conductor backend exists;
+- all agents should be copied into `~/.coral/agents`;
+- a server source checkout exists under `~/.coral/coral-server`.
+
+Use `coral-app-integration` for app/conductor/cloud boundaries and `coral-setup` for server configuration.

@@ -1,212 +1,98 @@
 ---
 name: coral-setup
-description: Set up and manage the Coral Protocol server environment. Use this skill when the user wants to install Coral, start/stop Coral server, reset the Coral environment, check if Coral is running, clone/update coral-server, or prepare a fresh Coral setup. Also trigger when the user mentions "coral server", "coral setup", "coral install", "start coral", "stop coral", or "coral environment".
+description: Use when installing, starting, stopping, inspecting, or configuring Coral Server, including npx coralos-dev, CONFIG_FILE_PATH, local server docs, auth keys, registry paths, production deployment, or deciding between local, self-hosted, and Cloud-assisted setup.
 ---
 
-# Coral Server Setup
+# Coral Setup
 
-This skill prepares the Coral Protocol server environment in `~/.coral/`.
+Use current runtime commands and live server docs as the source of truth. Do not patch Coral Server source from this skill unless the user explicitly asks to work on the server repo.
 
-## Step 1: Check current state
+## First Check
 
-Run this single command to check both the server process and the repo in one shot. This avoids parallel bash calls that can cancel each other when one returns a non-zero exit code:
-
-```bash
-echo "=== PROCESS CHECK ===" && (ps aux | grep -E "coral-server|coralserver" | grep -v grep || echo "NO_PROCESS_FOUND") && echo "=== PORT CHECK ===" && (lsof -ti:5555 || echo "PORT_FREE") && echo "=== REPO CHECK ===" && (mkdir -p ~/.coral && test -f ~/.coral/coral-server/gradlew && echo "REPO_EXISTS" || echo "REPO_NOT_FOUND")
-```
-
-Parse the output:
-- If processes were found (not "NO_PROCESS_FOUND"), kill them: `ps aux | grep -E "coral-server|coralserver" | grep -v grep | awk '{print $2}' | xargs kill 2>/dev/null`
-- If port is occupied (not "PORT_FREE"), free it: `lsof -ti:5555 | xargs kill 2>/dev/null`
-- If "REPO_EXISTS" → pull latest. If "REPO_NOT_FOUND" → clone fresh.
-
-Tell the user what you found and what actions you took.
-
-## Step 2: Clone or update coral-server
-
-Based on Step 1 results:
-
-**If repo does NOT exist** — clone from GitHub:
+From the user's intended project directory, inspect whether a server is already available:
 
 ```bash
-mkdir -p ~/.coral && git clone https://github.com/Coral-Protocol/coral-server.git ~/.coral/coral-server
+curl -fsS http://localhost:5555/api_v1.json >/dev/null && echo "CORAL_SERVER_READY" || echo "CORAL_SERVER_NOT_READY"
 ```
 
-**If repo DOES exist** — pull the latest changes:
+If it is ready, open or reference:
+
+- Console: `http://localhost:5555/ui/console`
+- Docs: `http://localhost:5555/ui/docs`
+- OpenAPI schema: `http://localhost:5555/api_v1.json`
+
+Use the auth key configured for that server. Do not assume `dev` or `test` unless the current command/config set it.
+
+## Local Development Server
+
+For a disposable or development server, prefer the current npm launcher:
 
 ```bash
-cd ~/.coral/coral-server && git pull
+npx coralos-dev@latest server start -- --auth.keys=dev
 ```
 
-## Step 3: Patch the Long field schema bug
+Keep the process in the foreground unless the user explicitly asks for a persistent background service. Logs in the foreground are part of the debugging surface.
 
-The coral-server uses schema-kenerator to auto-generate JSON schemas for MCP tool inputs. For Kotlin `Long` fields, it produces `minimum: -9223372036854775808` and `maximum: 9223372036854775807`, which exceed the 32-bit integer range. The Anthropic API rejects these with `"tools.N.custom.input_schema: int too big to convert"`, causing Claude Code agents to crash immediately on startup.
+If the user wants a config file:
 
-The affected fields are `currentUnixTime: Long` and `maxWaitMs: Long` in `WaitForMessageTools.kt`. The fix is to strip out-of-range `minimum`/`maximum` constraints from the generated schema before it reaches the API.
+1. Create a project-local TOML config, for example `./coral-config.toml`.
+2. Start with `CONFIG_FILE_PATH=./coral-config.toml npx coralos-dev@latest server start`.
+3. Put server settings in `[auth]`, `[network]`, `[registry]`, `[llm-proxy]`, and `[cloud]` according to the live docs.
 
-Apply the patch to `McpToolManager.kt`:
+Useful config facts:
+
+- CLI flags override config file values.
+- `CONFIG_FILE_PATH` points to the TOML file; there is no default config path.
+- Registry entries live under `[registry]`.
+- `includeCoralHomeAgents = true` scans Coral home agent links by default.
+- `localAgents`/`local_agents` can point at directories or whole-path wildcard segments containing `coral-agent.toml`.
+
+## Agent Discovery
+
+There are two valid ways to make agents discoverable:
+
+| Pattern | Use when | Mechanism |
+|---|---|---|
+| Coralizer link | The agent already has `coral-agent.toml` and should be available to local servers on the machine | Run `npx @coral-protocol/coralizer@latest link .` from the agent directory. This creates a versioned link under `~/.coral/agents/...`. |
+| Config file registry | The app or deployment should own exactly which agents a server sees | Add paths/globs under `[registry]` in the config file passed through `CONFIG_FILE_PATH`. |
+
+Use Coralizer for developer ergonomics. Use config-file registry entries for reproducible app, CI, VM, or container deployments.
+
+## Production / Self-Hosted
+
+For production or shared environments, read `coral-encyclopedia` docs:
+
+- `docs/guides/running-in-production.md`
+- `docs/reference/server-config.md`
+- live server docs at `/ui/docs`
+
+General production rules:
+
+- Use a secure auth key.
+- Do not expose a development auth key publicly.
+- Prefer Docker/runtime-managed services over ad hoc background shell processes.
+- Keep app/product state outside Coral unless Coral explicitly owns that runtime data.
+- Use app-owned logs/metrics for durable observability, and use Coral state/logs for session inspection.
+
+## Coral Cloud Boundary
+
+Current Cloud use does not automatically mean developer-owned agents are hosted by Coral Cloud. For now, distinguish:
+
+- Your own agents on your own local/self-hosted Coral Server.
+- Marketplace/Cloud-supported agents on Coral Cloud.
+- Cloud-assisted self-hosting, especially the Coral LLM proxy via `[cloud] apiKey` or configured `[llm-proxy]` providers.
+
+For Cloud-specific runtime behavior, use `coral-app-integration`.
+
+## Stop / Cleanup
+
+If you started the server in the current foreground terminal, stop it with Ctrl-C.
+
+If the user asks you to stop a background server, identify the exact process and port first:
 
 ```bash
-MCPTOOL="$HOME/.coral/coral-server/src/main/kotlin/org/coralprotocol/coralserver/mcp/McpToolManager.kt"
-test -f "$MCPTOOL" && echo "FILE_FOUND" || echo "FILE_NOT_FOUND"
+ps aux | grep -E "coral-server|coralos-dev" | grep -v grep
+lsof -nP -iTCP:5555 -sTCP:LISTEN
 ```
 
-If "FILE_FOUND", use the Edit tool to make two changes to `McpToolManager.kt`:
-
-**Change 1: Add imports.** Find the existing import block and add two imports after `import kotlinx.serialization.json.JsonObject`:
-
-```kotlin
-import kotlinx.serialization.json.JsonPrimitive
-import kotlinx.serialization.json.longOrNull
-```
-
-(If these imports already exist, skip this change — the patch may have been applied previously.)
-
-**Change 2: Add the sanitizer function and wire it in.** Add this function right before the existing `inline fun <reified In> buildToolSchema()` function:
-
-```kotlin
-/**
- * Strips `minimum` and `maximum` constraints from integer properties whose values exceed
- * the 32-bit signed integer range. The schema-kenerator library auto-generates Long-range
- * bounds (±9.2e18) for Kotlin Long fields, which the Anthropic API rejects with
- * "int too big to convert".
- */
-@PublishedApi
-internal fun sanitizeProperties(properties: JsonObject): JsonObject {
-    val intMax = Int.MAX_VALUE.toLong()
-    val intMin = Int.MIN_VALUE.toLong()
-
-    val sanitized = properties.mapValues { (_, propElement) ->
-        val propObj = propElement as? JsonObject ?: return@mapValues propElement
-        val keysToStrip = mutableSetOf<String>()
-        for (key in listOf("minimum", "maximum")) {
-            val bound = (propObj[key] as? JsonPrimitive)?.longOrNull
-            if (bound != null && (bound < intMin || bound > intMax)) {
-                keysToStrip.add(key)
-            }
-        }
-        if (keysToStrip.isEmpty()) propElement
-        else JsonObject(propObj.filterKeys { it !in keysToStrip })
-    }
-    return JsonObject(sanitized)
-}
-```
-
-Then, inside `buildToolSchema()`, find the return statement and change `properties = properties` to `properties = sanitizeProperties(properties)`:
-
-```kotlin
-// Before (original):
-    return ToolSchema(
-        required = required.map { it.jsonPrimitive.content },
-        properties = properties
-    )
-
-// After (patched):
-    return ToolSchema(
-        required = required.map { it.jsonPrimitive.content },
-        properties = sanitizeProperties(properties)
-    )
-```
-
-**Important notes:**
-- The function must be `@PublishedApi internal` (not `private`) because it is called from a `public inline` function. Using `private` will cause a Kotlin compilation error: "Public-API inline function cannot access non-public-API function."
-- To verify the patch was applied correctly, you can check that the file contains `sanitizeProperties`: `grep -c "sanitizeProperties" "$MCPTOOL"` — this should return 2 or more (the function definition + the call site).
-
-## Step 4: Configure config.toml
-
-Create or overwrite the server configuration file. First, determine the user's home directory:
-
-```bash
-echo $HOME
-```
-
-First, fetch the latest coral-studio (console) release version from GitHub:
-
-```bash
-CONSOLE_VERSION=$(curl -sL https://api.github.com/repos/Coral-Protocol/coral-studio/releases/latest | grep '"tag_name"' | sed 's/.*"tag_name": *"\([^"]*\)".*/\1/')
-echo "Latest coral-studio version: $CONSOLE_VERSION"
-```
-
-If the API call fails or returns empty, fall back to `"v0.3.11"`.
-
-Then write the config file, replacing `<HOME>` with the actual home directory path and `<CONSOLE_VERSION>` with the version fetched above:
-
-```bash
-cat > ~/.coral/coral-server/src/main/resources/config.toml << CONFIGEOF
-[docker]
-# Use host.docker.internal for WSL
-address = "host.docker.internal"
-socket = "unix:///var/run/docker.sock"
-
-[network]
-bind_address = "0.0.0.0"
-external_address = "0.0.0.0"
-bind_port = 5555
-allow_any_host = true
-
-[session]
-defaultWaitTimeout = 240000
-
-[auth]
-keys = ["test"]
-
-[registry]
-include_debug_agents = true
-local_agents = []
-
-[console]
-consoleReleaseVersion = "$CONSOLE_VERSION"
-CONFIGEOF
-```
-
-Note: The `local_agents` list is empty for now — it will be populated later when built-in agents are installed via the `coral-built-in-agent-setup` skill. The `[console]` section pins the coral-studio UI to the latest release version.
-
-## Step 5: Test-start the server
-
-After cloning/updating, patching, and configuring, do a test start to verify the server compiles and runs correctly. The first build takes 1-2 minutes because Gradle must download dependencies and compile Kotlin.
-
-```bash
-mkdir -p ~/.coral/logs && cd ~/.coral/coral-server && nohup ./gradlew run > ~/.coral/logs/coral-server.log 2>&1 &
-echo "PID: $!"
-```
-
-Then poll until the server responds (allow up to 3 minutes for first-time compilation):
-
-```bash
-for i in $(seq 1 90); do
-  STATUS=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:5555/ 2>/dev/null || echo "000")
-  if [ "$STATUS" != "000" ]; then echo "Coral server is ready (HTTP $STATUS)"; break; fi
-  if [ $((i % 15)) -eq 0 ]; then echo "Still compiling... ($i/90)"; fi
-  sleep 2
-done
-```
-
-If the server does not respond after 3 minutes, check the build log for errors:
-```bash
-tail -30 ~/.coral/logs/coral-server.log
-```
-
-Common issues:
-- **Kotlin compilation error**: The patch in Step 3 may not have applied cleanly. Verify with `grep -c "sanitizeProperties" ~/.coral/coral-server/src/main/kotlin/org/coralprotocol/coralserver/mcp/McpToolManager.kt`
-- **Port 5555 already in use**: Another process is using the port. Run `lsof -ti:5555 | xargs kill` and retry.
-- **Java not installed**: Gradle requires JDK 17+. Check with `java -version`.
-
-Once the server responds, stop it (it will be started again later when agents are ready):
-```bash
-lsof -ti:5555 | xargs kill 2>/dev/null
-```
-
-Tell the user:
-- Where coral-server is located (`~/.coral/coral-server`)
-- The server compiled and started successfully
-- How to start it manually: `cd ~/.coral/coral-server && ./gradlew run`
-- That it will be available at `http://localhost:5555` once started
-
-## Step 6: Offer to install built-in agents
-
-After coral-server setup is complete, ask the user if they want to install and setup built-in agents (Claude Code, Hermes). Then read and follow the skill at `coral-built-in-agent-setup/SKILL.md` (sibling directory) to proceed with agent installation and setup.
-
-Also ask the user:
-> Do you have your own agent project that you'd like to connect to Coral? I can help integrate it so it can participate in multi-agent sessions.
-
-If the user says yes, read and follow the sibling skill at `${SKILL_DIR}/../coralize-your-agent/SKILL.md` to walk them through the integration.
+Only kill the specific process you started or the process the user identifies.
