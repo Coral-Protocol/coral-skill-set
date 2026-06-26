@@ -1,5 +1,10 @@
 {
   "name": "coral-skills",
-  "description": "Coral Protocol runtime wiring, API source lookup, app integration, and session-control skills",
-  "version": "1.0.0"
+  "description": "Single-entry Coral Protocol skill for runtime wiring, API source lookup, app integration, and session control",
+  "version": "1.0.0",
+  "author": {
+    "name": "Coral Protocol",
+    "email": "contact@coralprotocol.org",
+    "url": "https://github.com/Coral-Protocol"
+  }
 }

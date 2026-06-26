@@ -1,8 +1,3 @@
----
-name: coralize-your-agent
-description: Use when connecting a developer-owned agent project to Coral, linking an existing coral-agent.toml, wrapping an MCP server, choosing Coralizer versus registry config, or making an agent discoverable by Coral Server.
----
-
 # Coralize Your Agent
 
 Use current Coral agent/runtime specs as the source of truth. The goal is discovery and runtime wiring, not framework-specific app rewrites.
@@ -49,7 +44,7 @@ Verify exact commands against current Coralizer help or docs before running them
 
 If no manifest exists and the project is not an MCP server:
 
-1. Fetch the current server schema with `coral-runtime-reference`.
+1. Fetch the current server schema with `references/coral-runtime-reference.md`.
 2. Read current Coral agent manifest/runtime docs from the running server or source checkout.
 3. Add the smallest wrapper or entrypoint needed for the agent runtime to connect to Coral's MCP URL/secret.
 4. Add `coral-agent.toml`.
@@ -75,4 +70,4 @@ Do not assume:
 - one conductor backend exists;
 - all agents should be copied into `~/.coral/agents`.
 
-Use `coral-app-integration` for app/conductor/cloud boundaries and `coral-setup` for server configuration.
+Read `references/coral-app-integration.md` for app/conductor/cloud boundaries and `references/coral-setup.md` for server configuration.

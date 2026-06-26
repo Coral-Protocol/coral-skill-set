@@ -1,11 +1,6 @@
----
-name: coral-app-integration
-description: Use when wiring Coral into an application, backend, conductor service, self-hosted deployment, Cloud-assisted flow, Cloud Console session payload, marketplace agent, custom tools callback, APP_BASE_URL/CORAL_APPLICATION_ID/CORAL_CUSTOM_TOOL_SECRET variables, session lifecycle manager, LLM proxy, API key, billing, or app-owned state boundary.
----
-
 # Coral App Integration
 
-Use this skill to identify integration boundaries and runtime wiring. It should not prescribe product architecture.
+Use this reference to identify integration boundaries and runtime wiring. It should not prescribe product architecture.
 
 ## Load Only What Applies
 
@@ -17,7 +12,7 @@ Read only the reference that matches the user's question:
 | Agent-to-app callbacks, app tools, `customTools`, `customToolAccess`, callback signatures | `references/custom-tools.md` |
 | Cloud API key, LLM proxy, billing, marketplace agents, Cloud Console payloads, Cloud runtime | `references/cloud-runtime.md` |
 
-When exact request/response schemas matter, use `coral-runtime-reference` and the running server's `/api_v1.json`.
+When exact request/response schemas matter, read `references/coral-runtime-reference.md` and the running server's `/api_v1.json`.
 
 ## Cloud Signals
 
@@ -29,7 +24,7 @@ Treat these as Cloud-specific routing signals:
 - `APP_BASE_URL`, `CORAL_APPLICATION_ID`, or `CORAL_CUSTOM_TOOL_SECRET`;
 - user language about marketplace agents, hosted agents, billing, balance, or the Cloud LLM proxy.
 
-When a request has both Cloud and custom-tool signals, read both `cloud-runtime.md` and `custom-tools.md`.
+When a request has both Cloud and custom-tool signals, read both `references/cloud-runtime.md` and `references/custom-tools.md`.
 
 ## Integration Boundaries
 

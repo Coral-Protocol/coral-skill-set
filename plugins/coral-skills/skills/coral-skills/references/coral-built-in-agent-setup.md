@@ -1,13 +1,10 @@
----
-name: coral-built-in-agent-setup
-description: Use when installing, refreshing, or verifying the bundled Coral example agent templates in this plugin, including Puppet, Claude Code, Hermes, and OpenClaw local agent manifests.
----
-
 # Coral Built-In Agent Setup
 
-This skill copies packaged example agent manifests and startup scripts. It does not define the preferred application architecture.
+This reference covers packaged example agent manifests and startup scripts. It does not define the preferred application architecture.
 
-Bundled templates live in `${SKILL_DIR}/agents/`.
+Bundled templates live in `${SKILL_DIR}/assets/agents/`.
+
+The bundled manifests may intentionally use an older supported `edition` for compatibility. When creating new manifests or updating templates for a specific server release, verify the supported edition range against the running server or local `coral-server` source before changing `edition`.
 
 ## Inputs
 
@@ -47,7 +44,7 @@ Before overwriting an existing destination, inspect it and ask the user if they 
 mkdir -p ~/.coral/agents
 AGENT_NAME="puppet"
 mkdir -p "$HOME/.coral/agents/$AGENT_NAME"
-cp -R "${SKILL_DIR}/agents/$AGENT_NAME/." "$HOME/.coral/agents/$AGENT_NAME/"
+cp -R "${SKILL_DIR}/assets/agents/$AGENT_NAME/." "$HOME/.coral/agents/$AGENT_NAME/"
 chmod +x "$HOME/.coral/agents/$AGENT_NAME/startup.sh"
 ```
 
@@ -72,4 +69,4 @@ curl -fsS "$BASE_URL/api/v1/registry" \
 
 Confirm the installed agent names and versions appear before using them in a session template.
 
-Use `coral-session-control` only when the user wants to drive a concrete session through the API.
+Read `references/coral-session-control.md` only when the user wants to drive a concrete session through the API.

@@ -1,8 +1,3 @@
----
-name: coral-coordination-topologies
-description: Use when designing or reviewing how Coral agents should communicate inside a session, including groups, threads, mentions, waits, supervisor patterns, peer networks, pipelines, blackboards, contract-net bidding, debate, handoffs, or multi-agent topology choices.
----
-
 # Coral Coordination Topologies
 
 Use this as communication vocabulary for mapping a required collaboration shape onto Coral primitives. It is not an app-design recommendation engine.
@@ -39,4 +34,4 @@ Fast mapping:
 
 Topology is agent-to-agent communication inside a session. App integration is session ownership, callbacks, state, deployment, and billing.
 
-If the question asks about custom tools, conductors, Cloud, deployment, or app-owned state, also use `coral-app-integration`.
+If the question asks about custom tools, conductors, Cloud, deployment, or app-owned state, also read `references/coral-app-integration.md`.

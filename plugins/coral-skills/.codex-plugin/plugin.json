@@ -1,7 +1,7 @@
 {
   "name": "coral-skills",
   "version": "1.0.0",
-  "description": "Coral Protocol runtime wiring, API source lookup, app integration, and session-control skills",
+  "description": "Single-entry Coral Protocol skill for runtime wiring, API source lookup, app integration, and session control",
   "author": {
     "name": "Coral Protocol",
     "email": "contact@coralprotocol.org",
@@ -20,8 +20,8 @@
   "skills": "./skills/",
   "interface": {
     "displayName": "Coral Skills",
-    "shortDescription": "Coral runtime wiring and API source lookup.",
-    "longDescription": "Skills for locating current Coral runtime specifications, starting or inspecting Coral Server, making agents discoverable, identifying integration boundaries, and operating sessions without embedding app-specific workflow opinions.",
+    "shortDescription": "Route Coral work to the right runtime wiring guide.",
+    "longDescription": "One Coral Protocol skill that routes requests to the minimal setup, runtime-reference, agent-discovery, app-integration, session-control, custom-tool, Cloud, or topology guidance without embedding app-specific workflow opinions.",
     "developerName": "Coral Protocol",
     "category": "Productivity",
     "capabilities": [
@@ -30,9 +30,9 @@
     ],
     "websiteURL": "https://github.com/Coral-Protocol/coral-skill-set",
     "defaultPrompt": [
-      "Fetch the Coral OpenAPI schema for this server.",
-      "Start a local Coral Server and inspect it.",
-      "Make this agent discoverable by Coral."
+      "Use Coral Skills to fetch the OpenAPI schema for this server.",
+      "Use Coral Skills to start a local Coral Server and inspect it.",
+      "Use Coral Skills to wire this app to Coral Cloud custom tools."
     ]
   }
 }

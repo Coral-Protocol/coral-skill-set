@@ -1,8 +1,3 @@
----
-name: coral-setup
-description: Use when installing, starting, stopping, inspecting, or configuring Coral Server, including coralos-dev, CONFIG_FILE_PATH, auth keys, registry paths, local OpenAPI schema, and local or self-hosted server setup.
----
-
 # Coral Setup
 
 Use current runtime commands and the running server's OpenAPI schema as source of truth. Do not patch Coral Server source from this skill unless the user explicitly asks to work on the server repo.
@@ -40,7 +35,7 @@ With a config file:
 CONFIG_FILE_PATH=./coral-config.toml npx coralos-dev@latest server start
 ```
 
-Use the current server config reference from `coral-runtime-reference` or the local source before writing non-trivial config.
+Use the current server config reference from `references/coral-runtime-reference.md` or the local source before writing non-trivial config.
 
 ## Agent Discovery
 
@@ -62,7 +57,7 @@ For a self-hosted server, make only source-backed claims:
 - keep config explicit through environment variables or `CONFIG_FILE_PATH`;
 - verify the deployed server's `/api_v1.json` before generating API calls.
 
-For Cloud-specific behavior, use `coral-app-integration`.
+For Cloud-specific behavior, read `references/coral-app-integration.md`.
 
 ## Stop / Cleanup
 

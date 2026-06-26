@@ -1,13 +1,8 @@
----
-name: coral-session-control
-description: Use when operating a concrete Coral session through HTTP, Puppet, event, or state APIs, including creating sessions, checking readiness, sending messages, polling extended state, watching events, or closing sessions.
----
-
 # Coral Session Control
 
-Use this when an outside process needs to operate a Coral session. This is API wiring, not a recommendation to use multi-agent execution for every task.
+Use this reference when an outside process needs to operate a Coral session. This is API wiring, not a recommendation to use multi-agent execution for every task.
 
-For app ownership, custom tools, Cloud, or deployment, use `coral-app-integration`. For topology choices, use `coral-coordination-topologies`.
+For app ownership, custom tools, Cloud, or deployment, also read `references/coral-app-integration.md`. For topology choices, also read `references/coral-coordination-topologies.md`.
 
 ## Inputs
 
@@ -31,12 +26,12 @@ curl -fsS "$BASE_URL/api_v1.json" >/dev/null
 curl -fsS "$BASE_URL/api_v1.json" > /tmp/coral-api_v1.json
 ```
 
-If the server is unreachable, use `coral-setup`. Do not start background services from this skill.
+If the server is unreachable, read `references/coral-setup.md`. Do not start background services from this reference.
 
 Inspect only the endpoint schemas needed for the task:
 
 ```bash
-jq '.paths | keys[] | select(test("session|puppet|event"))' /tmp/coral-api_v1.json
+jq '.paths | keys[] | select(test("session|puppet|event|agent-rpc"))' /tmp/coral-api_v1.json
 ```
 
 ## Session Lifecycle
@@ -50,6 +45,8 @@ Use the exact path and payload from `/api_v1.json`. For a local session, the usu
 5. Close the session when finished.
 
 Do not synthesize a large session template from memory. Prefer a template from Coral Console, the app, tests, or the OpenAPI schema.
+
+Preserve version-sensitive fields in templates unless live validation rejects them. Common fields include top-level `budgetSettings`, per-agent `budgetSettings`, `x402Budgets`, `proxies`, `plugins`, and `annotations`.
 
 ## Readiness
 
@@ -65,6 +62,18 @@ Check current state fields from the live schema. In current server versions, use
 - `communicationStatus.type == "waiting_message"` or `thinking`
 
 If an agent is `stopped`, inspect logs/state before continuing.
+
+## Budgets And Claims
+
+Extended state is also the budget audit surface in current Coral Server versions. When a session stops, exits early, or behaves differently than expected, inspect:
+
+- session `runningBudget` and `budgetSettings`;
+- each agent's `runningBudget` and `budgetSettings`;
+- `agentClaimReceipts`, including claim type, calculated cost, and sequential claim id.
+
+Budget values are represented in Coral budget units from the live schema, not dollars. Do not infer pricing units from memory.
+
+Agent claim submission uses agent-authenticated RPC endpoints. Outside controllers should usually observe claim receipts through extended state rather than posting claims directly.
 
 ## Puppet Messages
 
@@ -85,7 +94,7 @@ Events are an optimization. Extended state is the audit surface.
 
 After sending work:
 
-1. Optionally run `${SKILL_DIR}/watch_coral.sh "$BASE_URL" "$AUTH_KEY" "$NAMESPACE" "$SESSION_ID"`.
+1. Optionally run `${SKILL_DIR}/scripts/watch_coral.sh "$BASE_URL" "$AUTH_KEY" "$NAMESPACE" "$SESSION_ID"`.
 2. Always GET the extended session endpoint after the watcher exits.
 3. Parse all threads for messages not yet processed.
 4. Continue until the task is complete, blocked, or the session should be closed.
