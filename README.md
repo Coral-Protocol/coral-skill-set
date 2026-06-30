@@ -14,7 +14,13 @@
     <a href="https://coralcloud.ai">Coral Cloud</a>
     ·
     <a href="https://docs.coralos.ai">Docs</a>
+    ·
+    <a href="https://youtu.be/_nqTKUwlkio?si=dInXXDaui_-rD1yv">Demo Video</a>
   </p>
+
+  <a href="https://youtu.be/_nqTKUwlkio?si=dInXXDaui_-rD1yv">
+    <img src="https://img.youtube.com/vi/_nqTKUwlkio/hqdefault.jpg" alt="Watch the Coral Agent Skills demo video" width="720" />
+  </a>
 </div>
 
 `coral-skills` gives coding agents a single entrypoint for Coral work, then routes
