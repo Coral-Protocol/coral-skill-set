@@ -4,8 +4,8 @@
   <h1>Coral Agent Skills</h1>
 
   <p>
-    One installable Coral Protocol routing skill for wiring coding agents into Coral Server,
-    Coral Cloud, sessions, custom tools, and multi-agent coordination patterns.
+    One installable Coral Protocol skill for building agent systems inside real applications,
+    then running and inspecting them through Coral Server or Coral Cloud.
   </p>
 
   <p>
@@ -26,11 +26,33 @@
   </a>
 </div>
 
-`coral-skills` gives coding agents a single entrypoint for Coral work, then routes
-them to the smallest relevant internal reference. The skill is intentionally a
-wiring guide, not an application-design manifesto: it points agents toward the
-current Coral runtime schema, server mechanics, Cloud/custom-tool boundaries,
-agent discovery paths, session-control APIs, and coordination-topology vocabulary.
+`coral-skills` gives Codex and other coding agents a single entrypoint for Coral
+work. It can now take an application requirement through agent-role design,
+graph topology, Koog or existing-agent integration, Puppet/API ingress,
+custom-tool callbacks, session lifecycle code, and runtime verification. It
+still routes operational questions to the smallest relevant reference and uses
+the target runtime's machine-readable schema as the source of truth.
+
+## Build An Agent System
+
+Point Codex at an application repository and ask for the outcome directly:
+
+```text
+$coral-skills Build a Coral agent system for this application. Users ask a
+question, specialists collaborate in an open graph, and the app stores one
+approved structured answer. Implement the first working slice and show me the
+real session threads.
+```
+
+The skill guides Codex to:
+
+- distinguish role prompts from genuinely separate agent implementations;
+- compile user and product signals into a deterministic, testable graph specification;
+- preserve application ownership of users, permissions, artifacts, and durable state;
+- use Coral groups, threads, mentions, and Puppet/API ingress for real collaboration;
+- wire least-privilege custom tools for application reads, writes, and result callbacks;
+- build payloads from the live Coral schema instead of remembered request shapes;
+- verify registry resolution, connected agents, real messages, results, failures, and session cleanup.
 
 ## Install For Claude Code
 
@@ -63,7 +85,7 @@ codex plugin list --marketplace coral-skill-set
 
 | Invocation | Description |
 |---|---|
-| `/coral-skills` in Claude Code, `$coral-skills` in Codex | Route any Coral Protocol request to the minimal setup, runtime-reference, agent-discovery, app-integration, session-control, Cloud/custom-tool, or topology guidance. |
+| `/coral-skills` in Claude Code, `$coral-skills` in Codex | Build and operate Coral agent systems, or route a focused Coral task to the minimal runtime, integration, Cloud, custom-tool, or topology guidance. |
 
 ## Reference Routing
 
@@ -73,6 +95,7 @@ custom tools or app integration plus session control.
 
 | Reference | Used for |
 |---|---|
+| [`build-application-agent-system.md`](plugins/coral-skills/skills/coral-skills/references/build-application-agent-system.md) | Turning an application requirement into agents, graph topology, conductor code, app callbacks, and runtime proof. |
 | [`coral-setup.md`](plugins/coral-skills/skills/coral-skills/references/coral-setup.md) | Installing, starting, stopping, inspecting, configuring, or troubleshooting Coral Server. |
 | [`coral-runtime-reference.md`](plugins/coral-skills/skills/coral-skills/references/coral-runtime-reference.md) | Finding the current machine-readable Coral API, OpenAPI schema, endpoint shapes, manifests, and source fallback. |
 | [`coralize-your-agent.md`](plugins/coral-skills/skills/coral-skills/references/coralize-your-agent.md) | Connecting developer-owned agents through Coralizer, `.coral`, `~/.coral`, `coral-agent.toml`, or config-file registry discovery. |
@@ -89,9 +112,9 @@ custom tools or app integration plus session control.
 
 1. Install the plugin for Claude Code or Codex.
 2. Invoke `/coral-skills` in Claude Code or `$coral-skills` in Codex.
-3. Ask for the Coral task directly: start a server, inspect a schema, coralize
-   an agent, wire a Cloud custom-tool callback, operate a session, or reason
-   about a coordination topology.
+3. Ask for the product outcome directly: build an application agent system,
+   start a server, inspect a schema, coralize an agent, wire a Cloud custom-tool
+   callback, operate a session, or reason about a coordination topology.
 4. When exact API calls matter, the skill should fetch the current
    `BASE_URL/api_v1.json` or use the most relevant source fallback.
 

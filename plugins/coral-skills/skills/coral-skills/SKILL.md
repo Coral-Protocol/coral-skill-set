@@ -1,14 +1,12 @@
 ---
 name: coral-skills
 description: >-
-  Use for any Coral Protocol task: installing, starting, stopping, inspecting,
-  or configuring Coral Server; locating OpenAPI/API/schema/source-of-truth docs;
-  coralizing or linking agents; installing bundled agent templates; wiring apps,
-  Cloud, marketplace agents, custom tools, callbacks, Fly/deployment, API keys,
-  LLM proxy, billing, or app-owned state; operating concrete sessions through
-  REST, Puppet, events, or extended state; and designing Coral
-  coordination/topology. Routes strictly to the minimal internal reference files
-  needed for the request.
+  Build, integrate, run, and debug Coral Protocol agent systems for applications.
+  Use for turning product requirements into agents, roles, groups, threads,
+  Puppet or API ingress, custom tools, session lifecycles, and runtime proof; or
+  for installing and configuring Coral Server, locating live API schemas,
+  coralizing agents, using Koog templates, wiring Cloud and marketplace agents,
+  and operating concrete sessions. Routes to the smallest relevant reference.
 ---
 
 # Coral Skills
@@ -21,6 +19,7 @@ Choose the smallest applicable set:
 
 | User intent | Read |
 |---|---|
+| Build or add a Coral agent system to an application; turn roles, tools, and product requirements into a working graph | `references/build-application-agent-system.md` |
 | Install, start, stop, inspect, configure, or troubleshoot Coral Server | `references/coral-setup.md` |
 | API, OpenAPI, schema, endpoint, payload, namespace, MCP tool/resource, runtime state, agent manifest source of truth | `references/coral-runtime-reference.md` |
 | Connect a developer-owned agent, Coralizer, `.coral`, `~/.coral`, `coral-agent.toml`, config-file agent discovery | `references/coralize-your-agent.md` |
@@ -36,6 +35,8 @@ Choose the smallest applicable set:
 
 - Read one primary reference by default.
 - Read a second reference only when the user request crosses boundaries. Examples:
+  - Application agent-system build with exact payloads: `references/build-application-agent-system.md` plus `references/coral-runtime-reference.md`.
+  - Application agent-system build with app callbacks: `references/build-application-agent-system.md` plus `references/custom-tools.md`.
   - Cloud custom tools: `references/cloud-runtime.md` plus `references/custom-tools.md`.
   - App-owned session lifecycle: `references/coral-app-integration.md` plus `references/coral-session-control.md`.
   - Exact Cloud/session payloads: `references/cloud-runtime.md` plus `references/coral-runtime-reference.md`.
@@ -47,6 +48,7 @@ Choose the smallest applicable set:
 
 ## Reference Inventory
 
+- `references/build-application-agent-system.md`
 - `references/coral-setup.md`
 - `references/coral-runtime-reference.md`
 - `references/coralize-your-agent.md`

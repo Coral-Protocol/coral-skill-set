@@ -1,7 +1,7 @@
 {
   "name": "coral-skills",
-  "version": "1.0.0",
-  "description": "Single-entry Coral Protocol skill for runtime wiring, API source lookup, app integration, and session control",
+  "version": "1.1.0",
+  "description": "Build and operate Coral agent systems inside real applications",
   "author": {
     "name": "Coral Protocol",
     "email": "contact@coralprotocol.org",
@@ -15,24 +15,28 @@
     "coral-protocol",
     "mcp",
     "openapi",
-    "multi-agent"
+    "multi-agent",
+    "agent-systems",
+    "koog"
   ],
   "skills": "./skills/",
   "interface": {
     "displayName": "Coral Skills",
-    "shortDescription": "Route Coral work to the right runtime wiring guide.",
-    "longDescription": "One Coral Protocol skill that routes requests to the minimal setup, runtime-reference, agent-discovery, app-integration, session-control, custom-tool, Cloud, or topology guidance without embedding app-specific workflow opinions.",
+    "shortDescription": "Build Coral agent systems for your application.",
+    "longDescription": "Turn application requirements into Coral agents, open communication graphs, Puppet or API ingress, custom-tool callbacks, session lifecycle code, and observable runtime proof. Also covers Server, Cloud, marketplace agents, schemas, and debugging.",
     "developerName": "Coral Protocol",
     "category": "Productivity",
     "capabilities": [
       "Reference",
-      "Local Tooling"
+      "Local Tooling",
+      "Application Integration",
+      "Agent System Design"
     ],
     "websiteURL": "https://github.com/Coral-Protocol/coral-skill-set",
     "defaultPrompt": [
-      "Use Coral Skills to fetch the OpenAPI schema for this server.",
-      "Use Coral Skills to start a local Coral Server and inspect it.",
-      "Use Coral Skills to wire this app to Coral Cloud custom tools."
+      "Build a working Coral agent system for this application.",
+      "Turn these roles and tools into a Coral graph and test it.",
+      "Wire this app to Coral and show the live agent threads."
     ]
   }
 }

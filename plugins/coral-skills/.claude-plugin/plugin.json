@@ -1,7 +1,7 @@
 {
   "name": "coral-skills",
-  "description": "Single-entry Coral Protocol skill for runtime wiring, API source lookup, app integration, and session control",
-  "version": "1.0.0",
+  "description": "Build, integrate, test, and operate Coral agent systems inside real applications",
+  "version": "1.1.0",
   "author": {
     "name": "Coral Protocol",
     "email": "contact@coralprotocol.org",

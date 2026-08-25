@@ -2,6 +2,8 @@
 
 This reference covers packaged example agent manifests and startup scripts. It does not define the preferred application architecture.
 
+For a new Coral-native Kotlin agent, use the maintained `Coral-Protocol/coral-koog-agent` template rather than copying one of the CLI adapter examples below. Verify its current requirements and hydrate it with `npm create koog <agent-name>` or the documented Gradle task. Use the packaged templates in this skill for their named external-agent adapters only.
+
 Bundled templates live in `${SKILL_DIR}/assets/agents/`.
 
 The bundled manifests may intentionally use an older supported `edition` for compatibility. When creating new manifests or updating templates for a specific server release, verify the supported edition range against the running server or local `coral-server` source before changing `edition`.

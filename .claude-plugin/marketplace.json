@@ -1,6 +1,6 @@
 {
   "name": "coral-skill-set",
-  "description": "Official Coral Protocol skill for runtime wiring, schema lookup, app integration, and session control",
+  "description": "Official Coral Protocol skill for building and operating application agent systems",
   "owner": {
     "name": "Coral Protocol",
     "email": "contact@coralprotocol.org"
@@ -9,15 +9,15 @@
     {
       "name": "coral-skills",
       "source": "./plugins/coral-skills",
-      "description": "Single-entry Coral Protocol skill that routes setup, runtime reference, agent discovery, app integration, and session-control work",
-      "version": "1.0.0",
+      "description": "Build, integrate, test, and operate Coral agent systems inside real applications",
+      "version": "1.1.0",
       "author": {
         "name": "Coral Protocol"
       },
       "homepage": "https://github.com/Coral-Protocol/coral-skill-set",
       "repository": "https://github.com/Coral-Protocol/coral-skill-set",
       "license": "MIT",
-      "keywords": ["coral", "coral-protocol", "mcp", "openapi", "ai-agents"],
+      "keywords": ["coral", "coral-protocol", "mcp", "openapi", "ai-agents", "agent-systems", "koog"],
       "category": "ai-agents"
     }
   ]
