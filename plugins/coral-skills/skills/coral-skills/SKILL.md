@@ -2,7 +2,8 @@
 name: coral-skills
 description: >-
   Build, integrate, run, and debug Coral Protocol agent systems for applications.
-  Use for turning product requirements into agents, roles, groups, threads,
+  Use for mapping information boundaries, maintained awareness contexts, and
+  one or multiple executors into groups, threads,
   Puppet or API ingress, custom tools, session lifecycles, and runtime proof; or
   for installing and configuring Coral Server, locating live API schemas,
   coralizing agents, using Koog templates, wiring Cloud and marketplace agents,
@@ -13,13 +14,36 @@ description: >-
 
 Use this as the single entry point for Coral Protocol work. This skill is a router. It should load only the reference file or files needed for the request, then act from those instructions and the live Coral runtime schema.
 
+## Default Mental Model: Awareness Before Executors
+
+For installation, first-run examples, and natural-language planning, start with
+what must be known across the search space: sources, evidence, freshness,
+information boundaries, and which contexts need each change. A maintained
+context is bounded domain knowledge with an update policy; it need not be a
+separate agent or process. Distribute awareness only where useful, and notify
+selectively when evidence changes a relevant decision.
+
+Before proposing agent counts, ask: **Can one capable executor harness with tools
+use these contexts and achieve the outcome?** Coordination design and executor
+harness choice are independent variables. Retain multiple executors when actual
+independent work, permission separation, isolation, or measured latency justifies
+them. Do not translate “marketing,” “sales,” or “support” into an anthropomorphic
+org chart. Measure useful decisions, freshness, missed changes, noise, cost, and
+latency against the single-harness baseline; more agents is not a success metric.
+
+Public Coral supplies session communication. The application/harness owns source
+watching, durable awareness, relevance policy, permission enforcement, delivery
+recovery, and evidence-backed acknowledgements. A mention is a notification,
+not guaranteed wake or semantic attention. Keep this baseline even for a narrow
+setup task; do not force an architecture exercise before installing the plugin.
+
 ## Strict Routing
 
 Choose the smallest applicable set:
 
 | User intent | Read |
 |---|---|
-| Build or add a Coral agent system to an application; turn roles, tools, and product requirements into a working graph | `references/build-application-agent-system.md` |
+| Build or add a Coral agent system to an application; plan information boundaries and one or multiple executors | `references/build-application-agent-system.md` |
 | Install, start, stop, inspect, configure, or troubleshoot Coral Server | `references/coral-setup.md` |
 | API, OpenAPI, schema, endpoint, payload, namespace, MCP tool/resource, runtime state, agent manifest source of truth | `references/coral-runtime-reference.md` |
 | Connect a developer-owned agent, Coralizer, `.coral`, `~/.coral`, `coral-agent.toml`, config-file agent discovery | `references/coralize-your-agent.md` |
@@ -29,12 +53,15 @@ Choose the smallest applicable set:
 | Custom tools, app callbacks, `APP_BASE_URL`, `CORAL_APPLICATION_ID`, `CORAL_CUSTOM_TOOL_SECRET`, signatures | `references/custom-tools.md` |
 | Cloud runtime, marketplace agents, Cloud API key, Cloud billing, Cloud Console payloads | `references/cloud-runtime.md` |
 | Session ownership, conductor process, self-hosted deployment, workflow orchestration | `references/setup-patterns.md` |
+| Design maintained contexts, evidence, freshness, subscriptions, or compare a single harness with multiple executors | `references/context-awareness.md` |
+| Implement awareness using public endpoints, message contracts, replay, watchers, or harness adapters | `references/public-awareness-patterns.md` |
 | Communication topology or multi-agent architecture vocabulary | `references/coral-coordination-topologies.md` |
 
 ## Loading Rules
 
 - Read one primary reference by default.
 - Read a second reference only when the user request crosses boundaries. Examples:
+  - Awareness planning with public implementation requirements: `references/context-awareness.md` plus `references/public-awareness-patterns.md`.
   - Application agent-system build with exact payloads: `references/build-application-agent-system.md` plus `references/coral-runtime-reference.md`.
   - Application agent-system build with app callbacks: `references/build-application-agent-system.md` plus `references/custom-tools.md`.
   - Cloud custom tools: `references/cloud-runtime.md` plus `references/custom-tools.md`.
@@ -48,6 +75,8 @@ Choose the smallest applicable set:
 
 ## Reference Inventory
 
+- `references/context-awareness.md`
+- `references/public-awareness-patterns.md`
 - `references/build-application-agent-system.md`
 - `references/coral-setup.md`
 - `references/coral-runtime-reference.md`

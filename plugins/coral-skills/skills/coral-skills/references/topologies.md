@@ -1,6 +1,6 @@
 # Multi-Agent Topologies For Coral
 
-Use these as communication vocabulary. Pick only when the user's problem or repo already implies the shape.
+Use these as communication vocabulary. These describe communication, not an org chart or a reason to create more agents. Start with bounded awareness contexts and one capable harness; justify multiple executors independently. Pick only when the user's problem or repo already implies the shape.
 
 ## Peer / Network Graph
 
@@ -10,7 +10,7 @@ Map to Coral:
 
 - Put peers in the same group.
 - Let agents create threads for subtopics.
-- Use mentions to route work and wake agents.
+- Use mentions to target notifications; use application acknowledgements for assignment.
 
 ## Supervisor
 
@@ -28,7 +28,7 @@ Supervisors manage subteams; a top-level supervisor coordinates team outputs.
 
 Map to Coral:
 
-- Use groups to encode subteam visibility.
+- Use groups to seed subteam discovery, never enforce access control.
 - Use separate threads for subteam work and cross-team handoff.
 
 ## Pipeline
@@ -38,7 +38,7 @@ Work moves through fixed stages.
 Map to Coral:
 
 - A conductor or manager creates stage-specific threads.
-- Stage gates live in the app, manager agent, or custom tools.
+- Enforce stage gates in application code or controlled custom tools.
 - Durable stage state should be external if it must outlive the session.
 
 ## Blackboard
@@ -58,7 +58,7 @@ Agents publish and react to topic-specific events.
 Map to Coral:
 
 - Use threads as topic channels.
-- Use mentions or app/Puppet messages as deterministic wake-up signals.
+- Use mentions or app/Puppet messages as notification signals; harness scheduling and consumption remain separate.
 - Consider one topic per durable workstream rather than one giant thread.
 
 ## Contract-Net / Task Bidding
@@ -87,7 +87,7 @@ Agents locally decide which agent should take over next.
 
 Map to Coral:
 
-- Encode allowed handoffs in agent prompts/descriptions.
+- Describe handoff intent in prompts; enforce allowed assignments and permissions in application code.
 - Use mentions as transfer signals.
 - Keep a visible thread trail of why control moved.
 

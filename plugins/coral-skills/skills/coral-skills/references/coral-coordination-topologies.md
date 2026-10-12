@@ -1,13 +1,13 @@
 # Coral Coordination Topologies
 
-Use this as communication vocabulary for mapping a required collaboration shape onto Coral primitives. It is not an app-design recommendation engine.
+Use this as communication vocabulary for mapping a required collaboration shape onto Coral primitives. First map information boundaries and compare a single capable harness in [context-awareness.md](context-awareness.md). Coordination and executor choice are independent; these patterns do not prescribe an agent count.
 
 ## Coral Primitives
 
 - **Session**: bounded workspace for one agent graph.
-- **Groups**: initial awareness/connectivity between agents.
+- **Groups**: discovery links between agents, not ACLs.
 - **Threads**: task/topic-specific communication spaces.
-- **Mentions**: deterministic routing and wake-up signal.
+- **Mentions**: notification targeting, not guaranteed wake, assignment, or attention.
 - **Wait tools**: coordination and backpressure.
 - **Custom tools**: app boundary, not ordinary agent discussion.
 - **Puppet/API**: outside process or user proxy for session control.
@@ -22,7 +22,7 @@ Fast mapping:
 |---|---|
 | Open-ended collaboration among peers | Peer/network graph |
 | Central control and clear ownership | Supervisor |
-| Teams of specialists with local managers | Hierarchical teams |
+| Independent work partitions requiring delegated coordination | Hierarchical teams |
 | Deterministic stage gates | Pipeline |
 | Shared evolving solution state | Blackboard |
 | Event-driven loose coupling | Pub-sub/topic routing |

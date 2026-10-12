@@ -27,8 +27,9 @@
 </div>
 
 `coral-skills` gives Codex and other coding agents a single entrypoint for Coral
-work. It can now take an application requirement through agent-role design,
-graph topology, Koog or existing-agent integration, Puppet/API ingress,
+work. It can take an application requirement through information boundaries,
+maintained awareness, executor selection, graph topology, Koog or existing-agent
+integration, Puppet/API ingress,
 custom-tool callbacks, session lifecycle code, and runtime verification. It
 still routes operational questions to the smallest relevant reference and uses
 the target runtime's machine-readable schema as the source of truth.
@@ -38,15 +39,18 @@ the target runtime's machine-readable schema as the source of truth.
 Point Codex at an application repository and ask for the outcome directly:
 
 ```text
-$coral-skills Build a Coral agent system for this application. Users ask a
-question, specialists collaborate in an open graph, and the app stores one
-approved structured answer. Implement the first working slice and show me the
-real session threads.
+$coral-skills Build a campaign planning assistant for this application. Map
+customer evidence, product facts, and channel constraints into maintained contexts.
+Check whether one capable harness with tools is sufficient. Notify only when a
+relevant, evidence-backed change affects the plan. Implement a small slice and
+compare freshness, useful decisions, cost, and latency with the baseline.
 ```
 
 The skill guides Codex to:
 
-- distinguish role prompts from genuinely separate agent implementations;
+- start with useful sources of awareness, information boundaries, evidence, and freshness;
+- choose who needs to know what and when a change warrants a notification;
+- compare one capable harness with justified multiple executors independently of coordination;
 - compile user and product signals into a deterministic, testable graph specification;
 - preserve application ownership of users, permissions, artifacts, and durable state;
 - use Coral groups, threads, mentions, and Puppet/API ingress for real collaboration;
@@ -95,7 +99,9 @@ custom tools or app integration plus session control.
 
 | Reference | Used for |
 |---|---|
-| [`build-application-agent-system.md`](plugins/coral-skills/skills/coral-skills/references/build-application-agent-system.md) | Turning an application requirement into agents, graph topology, conductor code, app callbacks, and runtime proof. |
+| [`context-awareness.md`](plugins/coral-skills/skills/coral-skills/references/context-awareness.md) | Planning bounded domain contexts, selective notification, and measured executor choices. |
+| [`public-awareness-patterns.md`](plugins/coral-skills/skills/coral-skills/references/public-awareness-patterns.md) | Public-server capability boundaries, message contracts, practical walkthroughs, and recovery. |
+| [`build-application-agent-system.md`](plugins/coral-skills/skills/coral-skills/references/build-application-agent-system.md) | Turning an application requirement into maintained contexts, executor choices, application code, and runtime proof. |
 | [`coral-setup.md`](plugins/coral-skills/skills/coral-skills/references/coral-setup.md) | Installing, starting, stopping, inspecting, configuring, or troubleshooting Coral Server. |
 | [`coral-runtime-reference.md`](plugins/coral-skills/skills/coral-skills/references/coral-runtime-reference.md) | Finding the current machine-readable Coral API, OpenAPI schema, endpoint shapes, manifests, and source fallback. |
 | [`coralize-your-agent.md`](plugins/coral-skills/skills/coral-skills/references/coralize-your-agent.md) | Connecting developer-owned agents through Coralizer, `.coral`, `~/.coral`, `coral-agent.toml`, or config-file registry discovery. |
@@ -112,7 +118,10 @@ custom tools or app integration plus session control.
 
 1. Install the plugin for Claude Code or Codex.
 2. Invoke `/coral-skills` in Claude Code or `$coral-skills` in Codex.
-3. Ask for the product outcome directly: build an application agent system,
+3. Start with the product outcome and information that must stay current. A context
+   is maintained domain knowledge, not necessarily another agent. Ask whether one
+   capable harness can use the required tools before adding executors. Then ask to
+   build an application agent system,
    start a server, inspect a schema, coralize an agent, wire a Cloud custom-tool
    callback, operate a session, or reason about a coordination topology.
 4. When exact API calls matter, the skill should fetch the current
@@ -121,6 +130,13 @@ custom tools or app integration plus session control.
 For Cloud Console exports or marketplace agents, the skill routes agents to the
 Cloud runtime and custom-tool callback checklists without copying the full Cloud
 API schema into the skillset.
+
+## Verification
+
+Run `python3 scripts/check_awareness.py` for local static checks. Planning and
+runtime scenarios, execution instructions, and evidence requirements are in
+[`evaluations/README.md`](plugins/coral-skills/skills/coral-skills/evaluations/README.md).
+Static success does not establish model behavior or live delivery guarantees.
 
 ## Prerequisites
 

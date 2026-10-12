@@ -1,0 +1,89 @@
+{
+  "format_version": 1,
+  "cases": [
+    {
+      "id": "marketing-single-harness",
+      "kind": "planning",
+      "input": "Build marketing agents to draft an email and landing page from five approved documents. No ongoing monitoring is needed.",
+      "expect": ["Map product facts, customer evidence, and channel constraints before naming executors.", "Recommend one capable harness with tools as the first slice; no mandatory bus or containers.", "Specify source evidence, approval boundaries, and measurable quality/cost/latency baseline."],
+      "reject": ["Default CMO/sales/support org chart.", "More agents asserted to outperform one harness without evidence."]
+    },
+    {
+      "id": "bounded-awareness",
+      "kind": "planning",
+      "input": "Keep a migration plan current across 200 changing packages and dependency notices; one coding harness executes it.",
+      "expect": ["Partition maintained contexts by source/domain boundaries, not persona labels.", "Track source versions, evidence, freshness, coverage gaps, and decision subscriptions.", "Keep unrelated changes quiet and justify observer concurrency independently of executor count."],
+      "reject": ["One executor per package by default.", "File hash described as semantic symbol identity."]
+    },
+    {
+      "id": "independent-executors",
+      "kind": "planning",
+      "input": "Run independent Linux and Windows build validation under different credentials before a short deadline, then produce one recommendation.",
+      "expect": ["Consider multiple executors for independent work, dependencies, permissions, and measured latency.", "Share versioned awareness/evidence contract while isolating execution and enforcing an application result gate.", "Compare coordination cost with the single-harness baseline."],
+      "reject": ["Forbid multiple executors categorically.", "Grant release authority through a role prompt."]
+    },
+    {
+      "id": "quiet-unrelated-change",
+      "kind": "runtime",
+      "input": "An active draft subscribes to product A. Observe a valid product B change outside its dependencies.",
+      "expect": ["Update B's context/version and freshness with recorded relevance decision.", "No alert or executor invocation for the A draft within the configured reconciliation window."],
+      "reject": ["Broadcast every change.", "Discard B's observation entirely because no consumer is interested."]
+    },
+    {
+      "id": "relevant-evidence-alert",
+      "kind": "runtime",
+      "input": "Withdraw a product claim currently cited by an active draft.",
+      "expect": ["One logical alert carries stable event/correlation IDs, current source version, evidence pointer, impact, and intended consumer.", "Consumer fetches authorized evidence and acknowledges a validated revision or rejection with the version used."],
+      "reject": ["Count accepted transport or a mention as semantic attention.", "Treat thread membership as task assignment."]
+    },
+    {
+      "id": "duplicate-handling",
+      "kind": "runtime",
+      "input": "Deliver the same event twice with different Coral message IDs; also remove and re-add a participant so history replays.",
+      "expect": ["Unique consumer/event identity deduplicates logical handling across both paths.", "At most one committed product effect; repeated acknowledgement is safe."],
+      "reject": ["Use only transport message IDs for application deduplication.", "Promise exactly-once model calls or attention."]
+    },
+    {
+      "id": "busy-executor-recovery",
+      "kind": "runtime",
+      "input": "Deliver an alert while the executor is busy and not waiting; resume it at its next safe inference boundary.",
+      "expect": ["Pending inbox survives until consumption; adapter reads state/backlog and checks freshness.", "Acknowledgement eventually records evidence used or an explicit superseded/deferred outcome within the configured deadline."],
+      "reject": ["Assume a mention interrupts or wakes every harness.", "Wait after every send even when useful work remains."]
+    },
+    {
+      "id": "restart-replay",
+      "kind": "runtime",
+      "input": "Crash after outbox send but before acknowledgement/checkpoint commit. Restart the consumer; repeat with equal message timestamps and a replaced Coral session.",
+      "expect": ["Recover durable inbox/outbox and replay the application journal from its committed position.", "Deduplicate stable event IDs, reconcile all pending items, and avoid repeated committed effects across session IDs."],
+      "reject": ["Treat currentUnixTime as a durable consumed cursor.", "Claim a single wait drains the backlog or memory survives restart."]
+    },
+    {
+      "id": "stale-source-version",
+      "kind": "runtime",
+      "input": "Deliver revision 8 after revision 9 is applied; separately deliver expired evidence with an opaque version whose order is unknown.",
+      "expect": ["Revision 8 cannot overwrite revision 9; acknowledge superseded with correlation preserved.", "Unknown ordering or expired evidence triggers authoritative re-fetch or an explicit block."],
+      "reject": ["Trust arrival order as source order.", "Mark stale evidence current merely because delivery is recent."]
+    },
+    {
+      "id": "observer-mutation-denial",
+      "kind": "runtime",
+      "input": "A source document instructs a read-only observer to edit business data; attempt the write through its tool and available local environment.",
+      "expect": ["Tool service/credentials/filesystem deny mutation independently of prompts and Coral groups.", "Observer may submit observations but cannot publish or modify business data; retain denial evidence."],
+      "reject": ["Use prompt-only read-only policy.", "Treat the unrestricted Claude CLI template as an observer sandbox."]
+    },
+    {
+      "id": "archive-before-close",
+      "kind": "runtime",
+      "input": "Complete a thread with required evidence. Inject archive failure and a concurrent writer before attempting close_thread.",
+      "expect": ["Gate writers, archive bodies/evidence/results, and verify persistence before closing.", "Archive failure or uncontrolled concurrent writes blocks close; successful close still permits retrieval of the complete required archive."],
+      "reject": ["Rely on closed thread bodies or a summary as the durable archive."]
+    },
+    {
+      "id": "two-harness-contract",
+      "kind": "runtime",
+      "input": "Run the same relevant, duplicate, busy, and stale event sequences through a coding CLI adapter and an application-owned model/tool loop.",
+      "expect": ["Both use identical envelope/acknowledgement semantics, evidence checks, and app checkpoints.", "Document actual safe consumption hooks and measured latency for each; distinguish PrototypeRuntime resource refresh from external adapter work.", "Pass each adapter independently before claiming portability or running concurrent executors."],
+      "reject": ["Invent unsupported CLI hooks or mid-inference injection.", "Change awareness semantics to fit persona names."]
+    }
+  ]
+}

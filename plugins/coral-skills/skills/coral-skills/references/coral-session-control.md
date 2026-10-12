@@ -42,7 +42,7 @@ Use the exact path and payload from `/api_v1.json`. For a local session, the usu
 2. Poll extended state until required agents are connected.
 3. Create threads or send messages through Puppet/API if an outside controller is used.
 4. Poll extended state or watch events until completion/blockage.
-5. Close the session when finished.
+5. Archive required evidence and message bodies, verify persistence, then close the session when finished.
 
 Do not synthesize a large session template from memory. Prefer a template from Coral Console, the app, tests, or the OpenAPI schema.
 
@@ -86,7 +86,7 @@ curl -fsS -X POST "$BASE_URL/api/v1/puppet/$NAMESPACE/$SESSION_ID/$PUPPET_AGENT/
   --data @message.json
 ```
 
-Use explicit mentions when deterministic routing matters.
+Use explicit mentions to target notifications. Membership is not assignment, notification is not wake, and transport acceptance is not semantic attention. Use application acknowledgements and harness scheduling where required.
 
 ## Watch And Poll
 
@@ -102,6 +102,11 @@ After sending work:
 Do not run the watcher twice in a row without reading extended state between runs.
 
 ## Close
+
+Archive required message bodies and evidence in application storage before calling
+`close_thread`: the inspected public implementation clears messages, retaining a
+summary. Also persist required results before deleting a session. See
+[public-awareness-patterns.md](public-awareness-patterns.md) for replay and recovery.
 
 ```bash
 curl -fsS -X DELETE "$BASE_URL/api/v1/local/session/$NAMESPACE/$SESSION_ID" \

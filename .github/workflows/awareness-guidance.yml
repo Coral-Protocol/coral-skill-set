@@ -1,0 +1,21 @@
+name: Awareness guidance
+
+on:
+  pull_request:
+  push:
+    branches: [master]
+
+permissions:
+  contents: read
+
+jobs:
+  static-checks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+      - name: Check documentation, scenarios, and shell syntax
+        run: python3 scripts/check_awareness.py
+      - name: Check whitespace
+        run: git diff --check HEAD^ HEAD

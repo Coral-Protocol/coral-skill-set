@@ -10,6 +10,27 @@ Use this when the user wants Coral added to a product or wants an agent graph bu
 
 Do not stop at a diagram when the user asked for a working system. Do not create external accounts, credentials, paid resources, or production deployments without the required authorization.
 
+## Plan Awareness First
+
+First map the search space and information boundaries. Identify useful sources,
+which bounded domain contexts should know what, their evidence and freshness
+requirements, and which decisions warrant notification. A context may be a
+record or retrieved view maintained by ordinary code; it is not automatically an
+agent. Use [context-awareness.md](context-awareness.md) for planning examples.
+
+Explicitly compare one capable harness with tools against multiple executors.
+Select coordination independently of harness: the same maintained contexts and
+message contract can serve either. Add executors only for actual independent
+work, permissions, isolation, or measured latency gains. Persona labels and
+“more agents” are not evidence of value. Set a baseline for decision quality,
+coverage, freshness, alert noise, cost, and time before increasing complexity.
+
+The planning output should include a context/source map, relevance and expiry
+rules, tool-enforced authority, executor rationale, recovery needs, and a small
+measurable first slice. For “build a marketing system,” begin with campaign facts,
+customer evidence, and channel constraints; one harness may research and draft
+all outputs. Do not start by inventing sales/marketing/support departments.
+
 ## Start From the Application Contract
 
 Before naming agents, establish these facts from the request and repository:
@@ -23,7 +44,7 @@ Before naming agents, establish these facts from the request and repository:
 
 Infer these from the repository where possible. Ask one compact set of questions only when missing answers would materially change the implementation or require new authority.
 
-## Separate Roles From Agent Implementations
+## Choose Executors After Information Boundaries
 
 A named role does not automatically need its own codebase.
 
@@ -46,32 +67,35 @@ Map collaboration onto Coral primitives:
 
 - **Puppet or application API** represents the outside user or process entering the session.
 - **Agents** hold responsibilities, capabilities, and local decision authority.
-- **Groups** establish initial awareness and allowed collaboration, not chronological stages.
+- **Groups** seed discovery links; they are not ACLs or chronological stages.
 - **Threads** are created around live tasks, questions, proposals, critiques, and handoffs.
-- **Mentions** route responsibility and wake the relevant participant.
+- **Mentions** identify notification recipients; assignment requires an application contract and acknowledgement. They do not guarantee wake or attention.
 - **Custom tools** cross the application boundary for controlled reads, writes, callbacks, and final results.
 
-Prefer the least restrictive graph that still respects privacy and tool boundaries. Do not default to a linear pipeline merely because work can be described as steps. Use a pipeline only when deterministic stage gates are the actual requirement. For open-ended team reasoning, use a peer or supervisor-plus-peer graph and allow agents to open focused threads as the work develops.
+Start with the smallest arrangement that meets the information and authority
+requirements, including one executor. Keep bounded awareness contexts separate
+from the communication graph. For justified multiple executors, choose peer,
+supervisor, or pipeline coordination from actual dependencies; enforce stage
+gates and permissions in code. Thread membership is not work assignment.
 
-Create an agent only when at least one is true:
-
-- it contributes distinct expertise or evidence;
-- it has unique tool or data access;
-- it owns a decision, critique, or approval boundary;
-- it needs isolation for cost, security, or failure containment.
-
-Otherwise keep the responsibility inside an existing agent or deterministic application code.
+Create another executor when independent work can proceed usefully in parallel,
+permissions or runtime isolation require it, or measurements justify its latency
+and coordination costs. Distinct evidence alone may only require another context
+and retrieval tool. Keep other responsibilities in the existing harness or
+application code.
 
 ## Make Dynamic Graph Composition Testable
 
-When the application selects specialists from user answers, tenant settings, or task context, introduce an application-owned `AgentSystemSpec` (or equivalent typed object) between product inputs and the Coral session payload. It should describe the intended agents, responsibilities, groups, allowed tools, ingress, result contract, and operating envelope without pretending to be the runtime's `SessionRequest`.
+When the application selects contexts and executors from user answers, tenant settings, or task context, introduce an application-owned `AgentSystemSpec` (or equivalent typed object) between product inputs and the Coral session payload. It should describe source scopes, maintained contexts, freshness and notification rules, executor rationale, intended agents, groups, allowed tools, ingress, result contract, and operating envelope without pretending to be the runtime's `SessionRequest`.
 
 - Normalize product signals before graph selection; do not bury routing rules in a long prompt.
 - Keep an explicit allowlist from product signals to registry identities, versions, tools, and policy presets.
 - Let an LLM classify ambiguous context or recommend candidates, but let deterministic application policy validate the final graph.
-- Record why each specialist was selected so the product and its operators can explain the composition.
+- Record why each context and executor was selected so the product and its operators can explain the composition.
 - Unit-test representative, edge, and conflicting input combinations against the normalized spec.
 - Compile the validated spec into the target runtime's live session schema only at the Coral boundary.
+
+This selects a graph before session creation. The inspected public API uses a predeclared graph; changing thread participants is not spawning new graph agents. Do not promise arbitrary in-session graph expansion.
 
 This separation lets the product evolve its graph logic without coupling durable business rules to a changing runtime payload.
 
@@ -118,7 +142,9 @@ Adapt the file layout to the application instead of imposing a new framework. A 
 5. **Result contract** — a custom tool or app-owned endpoint for the final structured outcome when the product needs one.
 6. **State adapter** — persistence for durable status and artifacts, separate from Coral's session state.
 7. **Observability** — session/thread identifiers and useful progress events exposed without secrets.
-8. **Tests** — static contract tests plus a bounded runtime smoke when a runtime is available.
+8. **Tests** — static contract checks, planning evaluations, and a bounded runtime smoke when available; report these separately. Use the scenarios in `../evaluations/awareness-scenarios.json`.
+
+For ongoing awareness, add only the source watcher, context store, replay/checkpoint, and harness adapter required by the scenario; follow [public-awareness-patterns.md](public-awareness-patterns.md).
 
 Do not create empty abstractions for all eight when the requested slice is smaller. Do not hide a simulated answer behind a healthy-looking connection state.
 
@@ -143,11 +169,11 @@ Treat a successful build as necessary but insufficient. Verify as much of this c
 4. Required agents reach a connected or ready state; report partial connection honestly.
 5. The real ingress path places a task in the session.
 6. At least two participants exchange an actual thread message when collaboration is part of the design.
-7. Mentions or handoffs reach the intended agent.
+7. Verify an application acknowledgement with the evidence/version used; transport acceptance and notification alone do not prove attention.
 8. The application receives the final result through its real contract.
 9. Durable output is stored by the application, not only left in a thread.
 10. Timeout, unavailable-agent, invalid-callback, and cancellation paths fail visibly and recover safely.
-11. The session closes or follows the requested hold/TTL policy.
+11. Archive required evidence and message bodies before closing threads or the session; verify the archive, then close or follow the requested hold/TTL policy.
 
 Use Coral Console or the session/event API to show the real thread when visual inspection would add confidence. Do not call a graph live based only on a frontend badge, a mocked response, or session creation without connected agents and messages.
 

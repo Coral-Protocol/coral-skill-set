@@ -1,5 +1,11 @@
 # Coral Built-In Agent Setup
 
+For a first installation, explain that maintained awareness contexts describe
+sources, evidence, freshness, and who needs to know what. They need not be separate
+agents. Start with one capable harness when sufficient; install additional
+executor templates only for actual work or isolation requirements. See
+[context-awareness.md](context-awareness.md) when planning the first use case.
+
 This reference covers packaged example agent manifests and startup scripts. It does not define the preferred application architecture.
 
 For a new Coral-native Kotlin agent, use the maintained `Coral-Protocol/coral-koog-agent` template rather than copying one of the CLI adapter examples below. Verify its current requirements and hydrate it with `npm create koog <agent-name>` or the documented Gradle task. Use the packaged templates in this skill for their named external-agent adapters only.

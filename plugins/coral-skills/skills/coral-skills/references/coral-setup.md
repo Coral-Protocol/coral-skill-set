@@ -1,5 +1,11 @@
 # Coral Setup
 
+For a first installation, explain that maintained awareness contexts describe
+sources, evidence, freshness, and who needs to know what. They need not be separate
+agents. Start with one capable harness when sufficient; install additional
+executor templates only for actual work or isolation requirements. See
+[context-awareness.md](context-awareness.md) when planning the first use case.
+
 Use current runtime commands and the running server's OpenAPI schema as source of truth. Do not patch Coral Server source from this skill unless the user explicitly asks to work on the server repo.
 
 ## Check Existing Server
