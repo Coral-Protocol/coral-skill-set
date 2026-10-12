@@ -73,6 +73,6 @@ Prefer an existing local checkout. Clone the public repo only when no local chec
 
 - Read `references/coral-setup.md` for starting or configuring Coral Server.
 - Read `references/coralize-your-agent.md` for agent discovery and manifest wiring.
-- Read `references/coral-session-control.md` for REST/Puppet session operation.
+- Read `references/coral-session-debugging.md` for inspecting and testing sessions during development.
 - Read `references/coral-app-integration.md` for app boundaries, custom tools, Cloud, and deployment wiring.
 - Read `references/coral-coordination-topologies.md` for communication topology vocabulary.

@@ -1,7 +1,7 @@
 {
   "name": "coral-skills",
   "version": "1.1.0",
-  "description": "Build and operate Coral agent systems inside real applications",
+  "description": "Build Coral agents and integrate applications with Coral Server",
   "author": {
     "name": "Coral Protocol",
     "email": "contact@coralprotocol.org",
@@ -22,8 +22,8 @@
   "skills": "./skills/",
   "interface": {
     "displayName": "Coral Skills",
-    "shortDescription": "Build Coral agent systems for your application.",
-    "longDescription": "Turn application requirements into Coral agents, open communication graphs, Puppet or API ingress, custom-tool callbacks, session lifecycle code, and observable runtime proof. Also covers Server, Cloud, marketplace agents, schemas, and debugging.",
+    "shortDescription": "Build Coral agents and integrate apps with Coral Server.",
+    "longDescription": "Write Coral agents from the Koog template, integrate applications with Coral Server's HTTP API through session requests and signed custom-tool callbacks, configure and deploy the server, and debug sessions during development. Includes a mirror of the official Coral docs.",
     "developerName": "Coral Protocol",
     "category": "Productivity",
     "capabilities": [
@@ -34,9 +34,9 @@
     ],
     "websiteURL": "https://github.com/Coral-Protocol/coral-skill-set",
     "defaultPrompt": [
-      "Build a working Coral agent system for this application.",
-      "Turn these roles and tools into a Coral graph and test it.",
-      "Wire this app to Coral and show the live agent threads."
+      "Build a Coral agent around these MCP servers, using the Koog template as a reference.",
+      "Integrate this app with Coral: create sessions and receive results through custom tools.",
+      "Deploy Coral Server with this application's agents."
     ]
   }
 }

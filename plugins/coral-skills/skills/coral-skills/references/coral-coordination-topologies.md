@@ -10,11 +10,10 @@ Use this as communication vocabulary for mapping a required collaboration shape 
 - **Mentions**: deterministic routing and wake-up signal.
 - **Wait tools**: coordination and backpressure.
 - **Custom tools**: app boundary, not ordinary agent discussion.
-- **Puppet/API**: outside process or user proxy for session control.
 
 ## Reference
 
-Read `references/topologies.md` when the user is choosing or evaluating a coordination structure.
+The docs describe two collaboration patterns: a team of agents that plans its own interactions, and a workflow enforced through instructions and custom tools. Start from `docs/concepts/coordination.md`. Read `references/topologies.md` only when the user is choosing or evaluating a more specific structure.
 
 Fast mapping:
 
@@ -34,4 +33,4 @@ Fast mapping:
 
 Topology is agent-to-agent communication inside a session. App integration is session ownership, callbacks, state, deployment, and billing.
 
-If the question asks about custom tools, conductors, Cloud, deployment, or app-owned state, also read `references/coral-app-integration.md`.
+If the question asks about custom tools, application backends, Cloud, deployment, or app-owned state, also read `references/coral-app-integration.md`.

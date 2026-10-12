@@ -14,7 +14,7 @@ Do not stop at a diagram when the user asked for a working system. Do not create
 
 Before naming agents, establish these facts from the request and repository:
 
-1. **Ingress** — who or what starts the work: a person, API request, scheduled job, event, or another agent.
+1. **Trigger** — what makes the application create a session: a user action, API request, scheduled job, or event.
 2. **Outcome** — the result the application must receive, including its format and acceptance rule.
 3. **Durable state** — records, artifacts, approvals, and history that must outlive a Coral session.
 4. **Capabilities** — data sources, tools, models, browsers, code execution, or specialist knowledge required.
@@ -44,12 +44,12 @@ Verify the command and requirements against the current `Coral-Protocol/coral-ko
 
 Map collaboration onto Coral primitives:
 
-- **Puppet or application API** represents the outside user or process entering the session.
+- **The session request** carries the task in, through agent options, per-agent system prompts, and the graph itself.
 - **Agents** hold responsibilities, capabilities, and local decision authority.
 - **Groups** establish initial awareness and allowed collaboration, not chronological stages.
 - **Threads** are created around live tasks, questions, proposals, critiques, and handoffs.
 - **Mentions** route responsibility and wake the relevant participant.
-- **Custom tools** cross the application boundary for controlled reads, writes, callbacks, and final results.
+- **Custom tools** cross the application boundary for controlled reads, writes, input requests, and final results.
 
 Prefer the least restrictive graph that still respects privacy and tool boundaries. Do not default to a linear pipeline merely because work can be described as steps. Use a pipeline only when deterministic stage gates are the actual requirement. For open-ended team reasoning, use a peer or supervisor-plus-peer graph and allow agents to open focused threads as the work develops.
 
@@ -64,7 +64,7 @@ Otherwise keep the responsibility inside an existing agent or deterministic appl
 
 ## Make Dynamic Graph Composition Testable
 
-When the application selects specialists from user answers, tenant settings, or task context, introduce an application-owned `AgentSystemSpec` (or equivalent typed object) between product inputs and the Coral session payload. It should describe the intended agents, responsibilities, groups, allowed tools, ingress, result contract, and operating envelope without pretending to be the runtime's `SessionRequest`.
+When the application selects specialists from user answers, tenant settings, or task context, introduce an application-owned `AgentSystemSpec` (or equivalent typed object) between product inputs and the Coral session payload. It should describe the intended agents, responsibilities, groups, allowed tools, task input, result contract, and operating envelope without pretending to be the runtime's `SessionRequest`.
 
 - Normalize product signals before graph selection; do not bury routing rules in a long prompt.
 - Keep an explicit allowlist from product signals to registry identities, versions, tools, and policy presets.
@@ -81,15 +81,17 @@ Coral owns the ephemeral coordination runtime: graph instantiation, agent connec
 
 The application normally owns users, tenants, source permissions, durable workflow state, artifacts, audit records, product billing, schedules, and published results. Persist important outputs explicitly; do not treat thread history as the only product database.
 
-Use an application conductor when a product needs to:
+Agent definitions are part of the deployment. Ship them in the server's image or configuration, for example directories listed in `registry.localAgents`. Never make registering or linking an agent a step in handling a request.
 
-- create the session for a user or job;
-- select agent instances and role options;
-- send the initial Puppet or API message;
-- receive a structured result through a controlled callback;
-- expose progress without leaking private prompts or credentials;
-- renew, cancel, or close the session;
-- store the durable product result.
+The application backend:
+
+- creates the session for a user or job;
+- selects agent instances and role options;
+- passes the task and context in as agent options or system prompts;
+- receives a structured result through a controlled callback;
+- exposes progress without leaking private prompts or credentials;
+- cancels or closes the session, or lets its TTL end it;
+- stores the durable product result.
 
 ## Build From the Live Runtime Contract
 
@@ -111,10 +113,10 @@ Preserve user- or Console-exported payload fields unless the runtime rejects the
 
 Adapt the file layout to the application instead of imposing a new framework. A useful first working slice normally includes:
 
-1. **Agent runtime** — a current `coral-agent.toml` plus runnable entrypoint, or a verified existing/marketplace agent.
+1. **Agent runtime** — a current `coral-agent.toml` plus runnable entrypoint, or a verified existing/marketplace agent, shipped with the server's deployment.
 2. **Graph builder** — application code that compiles product context into agent instances, groups, options, tool access, TTL, and budgets.
-3. **Session client** — create, inspect, send, wait/watch, and close operations using the live API contract.
-4. **Ingress adapter** — Puppet or API logic that places the user's actual task into the session.
+3. **Session client** — create, inspect, and close operations using the live API contract.
+4. **Task input** — the agent options, system prompts, or input custom tool that give agents the user's actual task.
 5. **Result contract** — a custom tool or app-owned endpoint for the final structured outcome when the product needs one.
 6. **State adapter** — persistence for durable status and artifacts, separate from Coral's session state.
 7. **Observability** — session/thread identifiers and useful progress events exposed without secrets.
@@ -133,15 +135,15 @@ When agents need to act on the application, read `references/custom-tools.md` be
 - Require product approvals at the application boundary for consequential writes.
 - Return structured, bounded results; never expose provider credentials or raw private source locations to the thread.
 
-## Runtime Proof
+## Testing the Slice
 
 Treat a successful build as necessary but insufficient. Verify as much of this chain as the available environment permits:
 
 1. Agent manifests validate and contain no committed secrets.
-2. The target Coral registry resolves every requested agent identity and version.
+2. The deployed server's registry includes every agent identity and version the graph requests.
 3. A session is created with the intended groups, options, tools, TTL, and budget.
 4. Required agents reach a connected or ready state; report partial connection honestly.
-5. The real ingress path places a task in the session.
+5. The application's real session request delivers the task.
 6. At least two participants exchange an actual thread message when collaboration is part of the design.
 7. Mentions or handoffs reach the intended agent.
 8. The application receives the final result through its real contract.

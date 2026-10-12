@@ -37,8 +37,8 @@ Work moves through fixed stages.
 
 Map to Coral:
 
-- A conductor or manager creates stage-specific threads.
-- Stage gates live in the app, manager agent, or custom tools.
+- A manager agent creates stage-specific threads.
+- Stage gates live in the manager agent's instructions or in custom tools that check work against application rules.
 - Durable stage state should be external if it must outlive the session.
 
 ## Blackboard
@@ -58,7 +58,7 @@ Agents publish and react to topic-specific events.
 Map to Coral:
 
 - Use threads as topic channels.
-- Use mentions or app/Puppet messages as deterministic wake-up signals.
+- Use mentions as deterministic wake-up signals.
 - Consider one topic per durable workstream rather than one giant thread.
 
 ## Contract-Net / Task Bidding
@@ -78,7 +78,7 @@ Agents produce independent arguments or reviews before synthesis.
 Map to Coral:
 
 - Use separate proposal and critique threads when independence matters.
-- Use a judge/synthesizer agent or app conductor to decide.
+- Use a judge or synthesizer agent, or a custom tool that hands the decision to the application.
 - Preserve dissent if the output is audit-sensitive.
 
 ## Handoff

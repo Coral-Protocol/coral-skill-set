@@ -20,11 +20,11 @@ Exact schema comes from `/api_v1.json`. Current mechanics:
 
 1. The session request defines `agentGraphRequest.customTools`.
 2. Each agent receives only tools listed in `customToolAccess`.
-3. HTTP tools POST arguments to the configured app URL.
-4. Coral includes session/agent context in path or headers according to the current server schema.
-5. The app verifies Coral's signature before trusting the payload.
+3. HTTP tools POST the tool arguments as the JSON body to the configured URL, with `/{sessionId}/{agentName}` appended.
+4. Coral sends `X-Coral-Namespace`, `X-Coral-SessionId`, and `X-Coral-AgentName` headers.
+5. The app verifies `X-Coral-Signature`, a lowercase hexadecimal HMAC-SHA256 over the exact body bytes using the server's `network.customToolSecret`, before trusting the payload.
 
-Verify header names, signature format, and path behavior against the running server or source before implementing an endpoint.
+`docs/guides/integrating-with-your-app.md` has the full callback contract, including response handling and idempotency.
 
 ## Session Request Wiring
 

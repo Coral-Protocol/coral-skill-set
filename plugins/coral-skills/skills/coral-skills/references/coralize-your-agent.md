@@ -64,7 +64,7 @@ Do not assume:
 
 - Cloud can host arbitrary developer-owned agents;
 - one app-specific callback tool exists;
-- one conductor backend exists;
+- one application backend exists;
 - all agents should be copied into `~/.coral/agents`.
 
-Read `references/coral-app-integration.md` for app/conductor/cloud boundaries and `references/coral-setup.md` for server configuration.
+Read `references/coral-app-integration.md` for application, deployment, and Cloud boundaries and `references/coral-setup.md` for server configuration.

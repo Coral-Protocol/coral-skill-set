@@ -8,7 +8,7 @@ Read only the reference that matches the user's question:
 
 | Question | Read |
 |---|---|
-| Session ownership, app state, conductor process, self-hosting | `references/setup-patterns.md` |
+| Session ownership, app state, application backend, self-hosting | `references/setup-patterns.md` |
 | Agent-to-app callbacks, app tools, `customTools`, `customToolAccess`, callback signatures | `references/custom-tools.md` |
 | Cloud API key, LLM proxy, billing, marketplace agents, Cloud Console payloads, Cloud runtime | `references/cloud-runtime.md` |
 
@@ -34,14 +34,14 @@ Keep these boundaries explicit:
 - The app usually owns users, tenants, durable workflow state, schedules, billing relationship to its own users, artifacts, notifications, and product database records.
 - Custom tools are the app callback surface for agent-to-app communication.
 - Session webhooks are lifecycle notifications, not a substitute for application-specific result callbacks.
-- A session-managing agent is valid, but it must be given explicit tools or APIs by the application; do not assume exact tool names or endpoints exist.
+- Agent definitions ship with the server deployment. Sessions only instantiate them.
 
 ## Guardrails
 
 Do not assume any of these unless the user's repo, config, or live docs define them:
 
 - a particular named callback tool exists;
-- a conductor server runs on a fixed port;
+- an application backend runs on a fixed port;
 - Cloud can host arbitrary developer-owned agents;
 - Coral should own durable product state;
 - every multi-agent app needs the same topology.

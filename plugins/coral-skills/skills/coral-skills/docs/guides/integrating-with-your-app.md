@@ -24,6 +24,54 @@ While [Coral Console](../concepts/coral-console.md) has a ready-made interface o
 >
 > You can use the JSON available in [Coral Console's](../concepts/coral-console.md) editor pane when editing a session template - to quickly get a usable request body for your own POST to [`/api/v1/local/session`](../api-reference/endpoints.md#create-session).
 
+Every application API call needs one of the server's [auth keys](../reference/server/auth.md) in an `Authorization: Bearer` header. Agent secrets do not authenticate these endpoints.
+
+### Minimal request body
+
+The body is a [`SessionRequest`](../api-reference/schemas.md#sessionrequest). It needs an `agentGraphRequest` with at least one agent, and a `namespaceProvider`.
+
+```json
+{
+  "agentGraphRequest": {
+    "agents": [
+      {
+        "id": {
+          "name": "example-agent",
+          "version": "0.1.0",
+          "registrySourceId": { "type": "local" }
+        },
+        "name": "example",
+        "provider": {
+          "type": "local",
+          "runtime": "docker"
+        },
+        "systemPrompt": "You are a helpful agent."
+      }
+    ]
+  },
+  "namespaceProvider": {
+    "type": "create_if_not_exists",
+    "namespaceRequest": {
+      "name": "demo",
+      "deleteOnLastSessionExit": true
+    }
+  },
+  "execution": {
+    "mode": "immediate",
+    "runtimeSettings": { "ttl": 300000 }
+  }
+}
+```
+
+```bash
+curl -X POST http://localhost:5555/api/v1/local/session \
+  -H 'Content-Type: application/json' \
+  -H "Authorization: Bearer $CORAL_TOKEN" \
+  -d @session.json
+```
+
+The response contains the session's `namespace` and `sessionId`. [Sessions](../concepts/sessions.md#session-lifecycle) describes what happens from creation to termination.
+
 ## Custom Tools
 
 There are a lot of scenarios where agents need to be given capabilities that are tightly integrated with your application. While you can hard code these kinds of tools in agents you write yourself, when using agents from other developers - this doesn't work.

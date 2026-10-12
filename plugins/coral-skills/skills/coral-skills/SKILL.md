@@ -1,17 +1,26 @@
 ---
 name: coral-skills
 description: >-
-  Build, integrate, run, and debug Coral Protocol agent systems for applications.
-  Use for turning product requirements into agents, roles, groups, threads,
-  Puppet or API ingress, custom tools, session lifecycles, and runtime proof; or
-  for installing and configuring Coral Server, locating live API schemas,
-  coralizing agents, using Koog templates, wiring Cloud and marketplace agents,
-  and operating concrete sessions. Routes to the smallest relevant reference.
+  Build software on Coral Protocol. Use for writing Coral agents (Koog template,
+  coral-agent.toml, options, runtimes), integrating an application with Coral
+  Server's HTTP API (session requests, custom tools, signed callbacks),
+  configuring and deploying Coral Server, Coral Cloud specifics, budgets, and
+  debugging sessions during development. Routes to the smallest relevant
+  reference and to a mirror of the official docs.
 ---
 
 # Coral Skills
 
 Use this as the single entry point for Coral Protocol work. This skill is a router. It should load only the reference file or files needed for the request, then act from those instructions and the live Coral runtime schema.
+
+## How Coral Is Used
+
+You are writing software that uses Coral. The system you build must run without you.
+
+- **Agents ship with the deployment.** Agent definitions are part of the server's image or configuration, for example directories listed in `registry.localAgents`. Registering or linking agents is never a step in handling a request.
+- **Applications create sessions over HTTP.** A session request carries the graph and the task, through agent options and system prompts. A session runs from creation to termination with no person or coding agent in the loop.
+- **Results come back through custom tools.** Agents call application endpoints that Coral signs. Applications do not read results out of threads.
+- **Inspecting a live session is debugging.** Creating test sessions, reading their state, and sending messages with the Puppet API belong in development and tests, never in the production path.
 
 ## Strict Routing
 
@@ -21,15 +30,14 @@ Choose the smallest applicable set:
 |---|---|
 | Concepts, intended usage, `coral-agent.toml` fields, server config tables, or what the official docs say | `docs/INDEX.md`, then the linked page |
 | Build or add a Coral agent system to an application; turn roles, tools, and product requirements into a working graph | `references/build-application-agent-system.md` |
-| Install, start, stop, inspect, configure, or troubleshoot Coral Server | `references/coral-setup.md` |
+| Install, start, stop, configure, deploy, or troubleshoot Coral Server | `references/coral-setup.md` |
 | API, OpenAPI, schema, endpoint, payload, namespace, MCP tool/resource, runtime state, agent manifest source of truth | `references/coral-runtime-reference.md` |
-| Connect a developer-owned agent, Coralizer, `.coral`, `~/.coral`, `coral-agent.toml`, config-file agent discovery | `references/coralize-your-agent.md` |
-| Install, refresh, or verify packaged example agent templates | `references/coral-built-in-agent-setup.md` |
-| Create, poll, message, inspect, watch, or close a concrete Coral session | `references/coral-session-control.md` |
-| App integration, conductor services, durable app state, self-hosting, deployment, Cloud Console payloads, marketplace agents, API keys, billing, LLM proxy | `references/coral-app-integration.md` |
+| Write or port an agent, wrap MCP servers, `coral-agent.toml`, agent discovery during development | `references/coralize-your-agent.md` |
+| Inspect or debug a session during development: state, agent status, budgets, test messages | `references/coral-session-debugging.md` |
+| App integration boundaries, application backends, durable app state, Cloud Console payloads, marketplace agents, API keys, billing, LLM proxy | `references/coral-app-integration.md` |
 | Custom tools, app callbacks, `APP_BASE_URL`, `CORAL_APPLICATION_ID`, `CORAL_CUSTOM_TOOL_SECRET`, signatures | `references/custom-tools.md` |
 | Cloud runtime, marketplace agents, Cloud API key, Cloud billing, Cloud Console payloads | `references/cloud-runtime.md` |
-| Session ownership, conductor process, self-hosted deployment, workflow orchestration | `references/setup-patterns.md` |
+| Session ownership, application backends, self-hosted deployment, workflow orchestration | `references/setup-patterns.md` |
 | Communication topology or multi-agent architecture vocabulary | `references/coral-coordination-topologies.md` |
 
 ## Docs Mirror
@@ -47,9 +55,8 @@ Choose the smallest applicable set:
   - Application agent-system build with exact payloads: `references/build-application-agent-system.md` plus `references/coral-runtime-reference.md`.
   - Application agent-system build with app callbacks: `references/build-application-agent-system.md` plus `references/custom-tools.md`.
   - Cloud custom tools: `references/cloud-runtime.md` plus `references/custom-tools.md`.
-  - App-owned session lifecycle: `references/coral-app-integration.md` plus `references/coral-session-control.md`.
+  - Debugging an application's sessions: `references/coral-app-integration.md` plus `references/coral-session-debugging.md`.
   - Exact Cloud/session payloads: `references/cloud-runtime.md` plus `references/coral-runtime-reference.md`.
-  - Topology that must be implemented through sessions: `references/coral-coordination-topologies.md` plus `references/coral-session-control.md`.
 - Do not load every Coral reference to "be safe".
 - Prefer live machine-readable sources over prose. When exact API shapes matter, use `references/coral-runtime-reference.md` and the target server's `/api_v1.json`.
 - Preserve user-provided session payload fields unless the live schema or runtime rejects them.
@@ -61,16 +68,10 @@ Choose the smallest applicable set:
 - `references/coral-setup.md`
 - `references/coral-runtime-reference.md`
 - `references/coralize-your-agent.md`
-- `references/coral-built-in-agent-setup.md`
-- `references/coral-session-control.md`
+- `references/coral-session-debugging.md`
 - `references/coral-app-integration.md`
 - `references/cloud-runtime.md`
 - `references/custom-tools.md`
 - `references/setup-patterns.md`
 - `references/coral-coordination-topologies.md`
 - `references/topologies.md`
-
-Resources:
-
-- `scripts/watch_coral.sh`
-- `assets/agents/`

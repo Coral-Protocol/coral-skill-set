@@ -1,6 +1,6 @@
 {
   "name": "coral-skill-set",
-  "description": "Official Coral Protocol skill for building and operating application agent systems",
+  "description": "Official Coral Protocol skill for building agents and applications on Coral",
   "owner": {
     "name": "Coral Protocol",
     "email": "contact@coralprotocol.org"
@@ -9,7 +9,7 @@
     {
       "name": "coral-skills",
       "source": "./plugins/coral-skills",
-      "description": "Build, integrate, test, and operate Coral agent systems inside real applications",
+      "description": "Build Coral agents and integrate applications with Coral Server, grounded in the official docs",
       "version": "1.1.0",
       "author": {
         "name": "Coral Protocol"

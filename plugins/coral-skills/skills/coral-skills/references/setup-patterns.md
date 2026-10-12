@@ -4,11 +4,11 @@ These are ownership shapes to recognize in a repo. They are not recommendations 
 
 ## Local Sandbox
 
-- Coral Server runs locally, usually through `npx coralos-dev@latest server start`.
-- Agents run as local executables, Docker agents, prototype agents, or Coralized wrappers.
+- Coral Server runs on the developer's machine, from source or the published Docker image, as in `docs/guides/quickstart.md`.
+- The server finds agents through `registry.localAgents` or Coralizer links on that machine.
 - The machine-readable schema is local `/api_v1.json`.
 
-## App-Owned Conductor
+## Application Backend
 
 - Backend creates sessions through the REST API.
 - Backend stores durable user/workflow/artifact state.
@@ -20,15 +20,8 @@ These are ownership shapes to recognize in a repo. They are not recommendations 
 
 - Coral Server is deployed as a service.
 - App talks to Coral over HTTP/WebSocket.
-- Agent discovery is explicit through config, mounted paths, Coralizer links, or registry settings.
+- Agents ship with the deployment: `registry.localAgents` in `config.toml` points at agent directories in the image or a mounted volume. Coralizer links are a developer-machine convenience, not a deployment mechanism.
 - Custom tools are still local/self-hosted server primitives.
-
-## Agent-Owned Session Manager
-
-- The managing agent receives explicit tools/API credentials from the application.
-- It may create sessions, inspect state, send Puppet/API messages, and close sessions.
-- The app still defines permissions and durable state boundaries.
-- Do not assume fixed custom tool names, fixed endpoints, or universal conductor APIs.
 
 ## Cloud-Assisted Self-Hosted
 

@@ -21,38 +21,31 @@ Use the auth key configured for that server. Do not assume `dev` or `test` unles
 
 ## Start Local Server
 
-For local development, use the current launcher:
+For local development, run the server from source as `docs/guides/quickstart.md` shows. It needs JDK 24 and Git:
 
 ```bash
-npx coralos-dev@latest server start -- --auth.keys=dev
+git clone https://github.com/Coral-Protocol/coral-server
+cd coral-server
+./gradlew run --args="--auth.keys=dev"
 ```
+
+Agents that use the LLM proxy need a provider: pass a Coral Cloud API key with `--cloud.api-key`, or configure providers as `docs/reference/server/llm-proxy.md` describes. Do not use `npx coralos-dev`; its published version lags the server releases.
 
 Keep the process in the foreground unless the user explicitly asks for a persistent background service. Logs in the foreground are part of the debugging surface.
 
-With a config file:
-
-```bash
-CONFIG_FILE_PATH=./coral-config.toml npx coralos-dev@latest server start
-```
-
-Use the current server config reference from `references/coral-runtime-reference.md` or the local source before writing non-trivial config.
+With a config file, set `CONFIG_FILE_PATH` to it before starting. `docs/reference/server.md` lists the configuration tables.
 
 ## Agent Discovery
 
-There are two valid ways to make agents discoverable:
+A deployed server gets its agents from its deployment. List agent directories under `registry.localAgents` in the config file passed through `CONFIG_FILE_PATH`, and ship those directories in the image or a mounted volume. Agents are never added to a running deployment as part of doing work.
 
-| Pattern | Use when | Mechanism |
-|---|---|---|
-| Coralizer link | The agent already has `coral-agent.toml` and should be available to local servers on the machine | Run `npx @coral-protocol/coralizer@latest link .` from the agent directory. This creates a versioned link under `~/.coral/agents/...`. |
-| Config file registry | The app or deployment should own exactly which agents a server sees | Add paths/globs under `[registry]` in the config file passed through `CONFIG_FILE_PATH`. |
-
-Use Coralizer for developer ergonomics. Use config-file registry entries for reproducible app, CI, VM, or container deployments.
+On a developer's machine, `npx @coral-protocol/coralizer@latest link .` in an agent directory is a shortcut. It creates a versioned link under `~/.coral/agents/...`, which local servers scan by default.
 
 ## Self-Hosted Setup
 
-For a self-hosted server, make only source-backed claims:
+For a self-hosted server, follow `docs/guides/production/running-in-production.md`, and make only source-backed claims:
 
-- inspect the current image/package/start command;
+- use the published Docker image with Docker-runtime agents; the image cannot run executable-runtime agents;
 - use secure auth keys;
 - keep config explicit through environment variables or `CONFIG_FILE_PATH`;
 - verify the deployed server's `/api_v1.json` before generating API calls.
