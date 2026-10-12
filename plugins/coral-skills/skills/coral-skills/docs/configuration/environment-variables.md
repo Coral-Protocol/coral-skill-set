@@ -26,7 +26,7 @@ Overriding via environment variables:
 - For the standard server build, command-line settings override environment settings, which override the file supplied through `CONFIG_FILE_PATH`.
 - You can instead mount a complete `config.toml` and set `CONFIG_FILE_PATH`.
 
-_Note:_ There are no fixed server variables like `CORAL_SERVER_BIND_ADDRESS`, `CORAL_SERVER_BIND_PORT`, `REGISTRY_FILE_PATH`, or `CORAL_DATABASE_PATH` in v1.4.0; use the config keys above or `CONFIG_FILE_PATH`.
+_Note:_ There are no fixed server variables like `CORAL_SERVER_BIND_ADDRESS`, `CORAL_SERVER_BIND_PORT`, `REGISTRY_FILE_PATH`, or `CORAL_DATABASE_PATH` in v1.5.0; use the config keys above or `CONFIG_FILE_PATH`.
 
 ## Agent Configuration
 
@@ -48,7 +48,7 @@ When Coral Server orchestrates an agent (e.g., via Docker), it passes several en
 | `CORAL_PROXY_MODEL_<NAME>` | Model selected for that proxy request. |
 
 _Notes:_
-- `CORAL_SERVER_URL`, `CORAL_AGENT_NAME`, `CORAL_NAMESPACE`, `CORAL_SEND_CLAIMS`, and `CORAL_REMOTE_AGENT` are not set for local Docker/executable agents in public Server 1.4.0. Use `CORAL_API_URL`, `CORAL_AGENT_ID`, and application session metadata as appropriate.
+- `CORAL_SERVER_URL`, `CORAL_AGENT_NAME`, `CORAL_NAMESPACE`, `CORAL_SEND_CLAIMS`, and `CORAL_REMOTE_AGENT` are not set for local Docker/executable agents in public Server 1.5.0. Use `CORAL_API_URL`, `CORAL_AGENT_ID`, and application session metadata as appropriate.
 
 ### Agent-Specific Options
 

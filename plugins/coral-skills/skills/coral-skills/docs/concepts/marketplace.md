@@ -8,7 +8,7 @@ Source: https://docs.coralos.ai/concepts/marketplace
 
 The Coral marketplace lets servers discover agents, and lets agent authors publish their agents with optional pricing metadata and identity attestation.
 
-In v1.4.0, the marketplace integration is focused on discovery and metadata. Remote execution and payments are disabled by default (see [Status](#status-v1-4-0)).
+In v1.5.0, the marketplace integration is focused on discovery and metadata. Remote execution and payments are disabled by default (see [Status](#status-v1-5-0)).
 
 ## Enable marketplace discovery on your server
 
@@ -91,10 +91,9 @@ Even when discovered from the marketplace, agents can still be launched locally 
 
 The Registry API (`/api/v1/registry/...`) exposes marketplace items side by side with local ones, including option schemas and marketplace metadata.
 
-## Status (v1.4.0)
+## Status (v1.5.0)
 
-- Remote providers/payments are disabled. Only `provider.type = "local"` is supported for execution on v1.4.0.
-- Discovery and pricing metadata do not provide a remote rental service. v1.4.0 registers `POST /api/v1/agent-rental/reserve` and `GET /api/v1/agent-rental/wallet`: reservation handling is unimplemented, while the wallet endpoint returns the configured wallet address or HTTP 403 if none is configured. These endpoints were removed after the v1.4.0 tag.
+- Remote providers/payments are disabled. Only `provider.type = "local"` is supported for execution on v1.5.0.
 - Pricing metadata does not set session budgets. See [Budgets and claims](../concepts/budgets.md) for local usage accounting.
 - Use the marketplace today primarily for discovery and metadata; execution should be local.
 

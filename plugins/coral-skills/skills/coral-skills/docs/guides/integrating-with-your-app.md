@@ -114,7 +114,110 @@ Signatures cover the body, not the URL or identity headers. Use a job-specific c
 
 ### Complete application example
 
-The docs repository contains a runnable Node.js integration in [examples/application.mjs](https://github.com/Coral-Protocol/Docs/blob/Coral-Documentation/examples/application.mjs). It starts a callback server, verifies signatures before parsing JSON, creates a deferred session, saves the session-to-user mapping, and then starts execution. A distinct callback URL identifies each job. The example uses an in-memory map; replace it with shared durable storage for a deployed application.
+`application.mjs` below is a runnable Node.js integration. It starts a callback server, verifies signatures before parsing JSON, creates a deferred session, saves the session-to-user mapping, and then starts execution. A distinct callback URL identifies each job. The example uses an in-memory map; replace it with shared durable storage for a deployed application.
+
+#### application.mjs
+
+```javascript application.mjs
+import { createServer } from 'node:http';
+import { createHmac, randomUUID, timingSafeEqual } from 'node:crypto';
+
+export function verifySignature(bytes, signature, secret) {
+  if (typeof signature !== 'string' || !/^[a-f0-9]{64}$/i.test(signature)) return false;
+  return timingSafeEqual(Buffer.from(signature, 'hex'), createHmac('sha256', secret).update(bytes).digest());
+}
+
+// This runnable example uses memory for jobs. Use shared durable storage in a deployed application.
+export async function createReportApplication({ coralUrl, token, callbackSecret, callbackBaseUrl, port = 0 }) {
+  if (!token || !callbackSecret) throw new Error('Server auth token and custom tool secret are required');
+  const jobs = new Map();
+  const server = createServer(async (req, res) => {
+    const respond = (status, body) => {
+      res.writeHead(status, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify(body));
+    };
+    try {
+      const parts = new URL(req.url, 'http://localhost').pathname.split('/').filter(Boolean);
+      if (req.method !== 'POST' || parts.length !== 4 || parts[0] !== 'reports') return respond(404, { error: 'Unknown callback' });
+      const [, jobKey, sessionId, agentName] = parts.map(decodeURIComponent);
+      const job = jobs.get(jobKey);
+      if (!job || job.session?.sessionId !== sessionId || job.agentName !== agentName) return respond(404, { error: 'Unknown job' });
+      const chunks = []; let length = 0;
+      for await (const chunk of req) {
+        length += chunk.length;
+        if (length > 1024 * 1024) return respond(413, { error: 'Report too large' });
+        chunks.push(chunk);
+      }
+      const raw = Buffer.concat(chunks);
+      if (!verifySignature(raw, req.headers['x-coral-signature'], callbackSecret)) return respond(401, { error: 'Invalid signature' });
+      const report = JSON.parse(raw.toString('utf8'));
+      if (typeof report.title !== 'string' || typeof report.content !== 'string') return respond(400, { error: 'Invalid report' });
+      if (!job.report) {
+        // Persist the result under the trusted application's user/job mapping, never a user ID from the callback.
+        job.report = { ...report, userId: job.userId };
+        job.resolve(job.report);
+      }
+      respond(200, { success: true, reportId: jobKey });
+    } catch {
+      respond(400, { error: 'Invalid callback' });
+    }
+  });
+  await new Promise((resolve, reject) => { server.once('error', reject); server.listen(port, '127.0.0.1', resolve); });
+  const localUrl = `http://127.0.0.1:${server.address().port}`;
+  const callbacks = (callbackBaseUrl ?? localUrl).replace(/\/$/, '');
+  async function api(path, body, method = 'POST') {
+    const response = await fetch(coralUrl.replace(/\/$/, '') + path, {
+      method, headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
+      ...(body === undefined ? {} : { body: JSON.stringify(body) }),
+    });
+    if (!response.ok) throw new Error(`Coral ${method} ${path}: ${response.status} ${await response.text()}`);
+    const text = await response.text();
+    return text ? JSON.parse(text) : undefined;
+  }
+  return {
+    localUrl,
+    // Call only after authenticating the application user. `agent` is a full GraphAgentRequest.
+    async startReport(userId, agent) {
+      const jobKey = randomUUID();
+      let resolveResult;
+      const result = new Promise(resolve => { resolveResult = resolve; });
+      const job = { userId, agentName: agent.name, resolve: resolveResult };
+      jobs.set(jobKey, job);
+      let path;
+      try {
+        job.session = await api('/api/v1/local/session', {
+          namespaceProvider: { type: 'create_if_not_exists', namespaceRequest: { name: 'reports', deleteOnLastSessionExit: true } },
+          execution: { mode: 'defer' },
+          agentGraphRequest: {
+            agents: [{ ...agent, customToolAccess: [...new Set([...(agent.customToolAccess ?? []), 'submit_report'])] }],
+            customTools: { submit_report: {
+              description: 'Submit the finished report to the application',
+              inputSchema: { type: 'object', properties: { title: { type: 'string' }, content: { type: 'string' } }, required: ['title', 'content'] },
+              outputSchema: { type: 'object', properties: { success: { type: 'boolean' }, reportId: { type: 'string' } } },
+              transport: { type: 'http', url: `${callbacks}/reports/${jobKey}` },
+            } },
+          },
+        });
+        // The mapping exists before execution starts, including callbacks made immediately at startup.
+        path = `/api/v1/local/session/${encodeURIComponent(job.session.namespace)}/${encodeURIComponent(job.session.sessionId)}`;
+        await api(path, { ttl: 300000, persistenceMode: { mode: 'hold_after_exit', duration: 60000 } });
+        return {
+          session: job.session, result,
+          async close() { try { await api(path, undefined, 'DELETE'); } finally { jobs.delete(jobKey); } },
+        };
+      } catch (error) {
+        jobs.delete(jobKey);
+        if (path) await api(path, undefined, 'DELETE').catch(() => {});
+        throw error;
+      }
+    },
+    async close() {
+      server.closeAllConnections();
+      await new Promise(resolve => server.close(resolve));
+    },
+  };
+}
+```
 
 After copying that file, use it from your application's trusted backend:
 

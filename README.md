@@ -4,26 +4,21 @@
   <h1>Coral Agent Skills</h1>
 
   <p>
-    One installable Coral Protocol skill for building agent systems inside real applications,
-    then running and inspecting them through Coral Server or Coral Cloud.
+    One installable Coral Protocol skill for building agents and applications
+    on Coral Server or Coral Cloud.
   </p>
 
   <p>
     <a href="https://github.com/Coral-Protocol/coral-server">Coral Server</a>
     ·
     <a href="https://docs.coralos.ai">Docs</a>
-    ·
-    <a href="https://youtu.be/_nqTKUwlkio?si=dInXXDaui_-rD1yv">Demo Video</a>
   </p>
 
   <p>
     <strong><a href="https://coralcloud.ai">Sign up for Coral Cloud</a></strong>
-    and receive $30 in LLM proxy credits.
+    and receive $30 in LLM proxy credits for your agents' model calls.
   </p>
 
-  <a href="https://youtu.be/_nqTKUwlkio?si=dInXXDaui_-rD1yv">
-    <img src="assets/coral-skills-demo-video-thumbnail.png" alt="Watch the Coral Agent Skills demo video" width="720" />
-  </a>
 </div>
 
 `coral-skills` gives Codex, Claude Code and other coding agents a single

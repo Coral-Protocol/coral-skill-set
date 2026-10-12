@@ -254,7 +254,7 @@ Agents run under orchestration are provided with a set of "system" environment v
 | `CORAL_PROXY_FORMAT_<NAME>` | Provider format for that proxy request. |
 | `CORAL_PROXY_MODEL_<NAME>` | Selected model for that proxy request. |
 
-`CORAL_SEND_CLAIMS`, `CORAL_REMOTE_AGENT`, `CORAL_STATE_RESOURCE_URI`, and `CORAL_INSTRUCTION_RESOURCE_URI` are not emitted for local Docker/executable agents in public Server 1.4.0. Prototype runtimes consume configuration in-process instead of launching an environment-configured child process.
+`CORAL_SEND_CLAIMS`, `CORAL_REMOTE_AGENT`, `CORAL_STATE_RESOURCE_URI`, and `CORAL_INSTRUCTION_RESOURCE_URI` are not emitted for local Docker/executable agents in public Server 1.5.0. Prototype runtimes consume configuration in-process instead of launching an environment-configured child process.
 
 # Local iteration tips
 

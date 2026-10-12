@@ -79,10 +79,10 @@ Use JDK 24. Create a configuration file containing at least `[auth]` and `keys`,
 ```bash
 export CONFIG_FILE_PATH="$PWD/../coral-config/config.toml"
 # Create and populate that file before running this command.
-java -jar build/libs/coral-server-1.4.0.jar
+java -jar build/libs/coral-server-1.5.0.jar
 ```
 
-For a different checkout, use the version in its `gradle.properties` and the corresponding file in `build/libs`. For reproducible deployments, select an actually published version-plus-commit image tag or pin an image digest. Do not assume a bare `1.4.0` or `v1.4.0` image tag exists; the workflow publishes branch, version-plus-commit, and build-number tags. The `latest` command above is a starting point, not a release pin.
+For a different checkout, use the version in its `gradle.properties` and the corresponding file in `build/libs`. For reproducible deployments, select an actually published version-plus-commit image tag or pin an image digest. Do not assume a bare `1.5.0` or `v1.5.0` image tag exists; the workflow publishes branch, version-plus-commit, and build-number tags. The `latest` command above is a starting point, not a release pin.
 
 > **Info:**
 >

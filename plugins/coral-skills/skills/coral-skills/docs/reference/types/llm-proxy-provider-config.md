@@ -29,6 +29,7 @@ format.type = "OpenAI"
 The LLM provider format.  Current supported types are:
 - `OpenAI`
 - `Anthropic`
+- `DeepSeek`
 
 ### models
 **optional**

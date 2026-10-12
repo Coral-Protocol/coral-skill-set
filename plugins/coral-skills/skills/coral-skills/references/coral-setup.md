@@ -24,7 +24,7 @@ Use the auth key configured for that server. Do not assume `dev` or `test` unles
 For local development, run the server from source as `docs/guides/quickstart.md` shows. It needs JDK 24 and Git:
 
 ```bash
-git clone https://github.com/Coral-Protocol/coral-server
+git clone --branch v1.5.0 https://github.com/Coral-Protocol/coral-server
 cd coral-server
 ./gradlew run --args="--auth.keys=dev"
 ```

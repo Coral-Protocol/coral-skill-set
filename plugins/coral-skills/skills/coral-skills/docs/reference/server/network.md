@@ -27,7 +27,7 @@ are launched on separate machines, such as within a Kubernetes cluster.
 
 The port that the Coral server will bind to. Only TCP traffic is used by the Coral server.
 
-In the v1.4.0 release, command-line conversion of this unsigned value rejects ports above 32767. Configure higher ports as a numeric `bindPort` in `config.toml`; that file-based path supports them.
+In v1.5.0, command-line conversion of this unsigned value rejects ports above 32767. Configure higher ports as a numeric `bindPort` in `config.toml`; that file-based path supports them.
 
 # Allow any host
 **default** `false`

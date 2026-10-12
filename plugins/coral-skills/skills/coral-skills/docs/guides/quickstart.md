@@ -49,7 +49,7 @@ Agents that request an LLM proxy need a matching provider configured on the serv
 Build and run the server with JDK 24 and Git installed. Docker is also required for agents using the Docker runtime.
 ```bash git + gradle
 # Start server (logs show in this terminal)
-git clone https://github.com/Coral-Protocol/coral-server
+git clone --branch v1.5.0 https://github.com/Coral-Protocol/coral-server
 cd coral-server
 ./gradlew run --args="--auth.keys=dev --cloud.api-key=coral..."
 ```
@@ -192,4 +192,4 @@ Coral Server requires a bearer token for application REST endpoints. We set our 
 
 Naturally, variable substitution and environment variables should be used over hardcoding every option value, since sensitive information like API keys can be passed as agent options.
 
-That wraps up the CoralOS quickstart!
+That wraps up the CoralOS quickstart! Next, see [Integrating with your app](../guides/integrating-with-your-app.md).

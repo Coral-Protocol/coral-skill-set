@@ -4,7 +4,7 @@ Observe public Coral Server sessions, logs, and LLM proxy usage.
 
 Source: https://docs.coralos.ai/features/telemetry
 
-Public Coral Server 1.4.0 exposes session state, logs, and session events. It does **not** expose the historical `POST /api/v1/telemetry/{sessionId}` or per-message telemetry GET endpoints. Those paths return 404. A Console screenshot or feature from another release does not establish an API contract for the server you are running.
+Public Coral Server 1.5.0 exposes session state, logs, and session events. It does **not** expose the historical `POST /api/v1/telemetry/{sessionId}` or per-message telemetry GET endpoints. Those paths return 404. A Console screenshot or feature from another release does not establish an API contract for the server you are running.
 
 ## What is available
 

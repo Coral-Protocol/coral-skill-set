@@ -1,6 +1,6 @@
 # Security
 
-Auth keys, request signing, and agent secrets in Coral Server 1.4.0.
+Auth keys, request signing, and agent secrets in Coral Server 1.5.0.
 
 Source: https://docs.coralos.ai/configuration/security
 

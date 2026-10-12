@@ -27,10 +27,6 @@ CORAL_PROXY_MODEL_MAIN=gpt-5.2
 
 > **Warning:**
 >
-> Coral Server v1.4.0 incorrectly sets `CORAL_PROXY_FORMAT_<NAME>` to `OpenAI` for Anthropic proxies too. If your agent requests an Anthropic proxy on that release, select its Anthropic client from your agent configuration instead of this environment variable. The public checkout contains a fix after the v1.4.0 tag.
-
-> **Warning:**
->
 > The server will not launch agents that it cannot resolve proxies for!
 
 ### name
@@ -55,6 +51,7 @@ __Requirements__
 The LLM request format.  Current supported types are:
 - `OpenAI`
 - `Anthropic`
+- `DeepSeek`
 
 ```toml
 [[llm.proxies]]

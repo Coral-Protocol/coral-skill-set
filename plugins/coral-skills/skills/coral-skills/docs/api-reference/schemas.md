@@ -325,79 +325,6 @@ type GraphAgentRequest = {
   provider:
     | { type: "linked"; linkedServerName: string; runtime: RuntimeId }
     | { type: "local"; runtime: RuntimeId }
-    | {
-      type: "remote"
-      // The server that is providing this remote agent
-      server: GraphAgentServer
-      // The runtime to be used on the remote server. Likely Docker or Phala
-      runtime: RuntimeId
-      // The wallet address of the server that is providing this remote agent
-      wallet: string
-      // The max cost of this agent
-      maxCost:
-        | { type: "coral"; amount: number /* double */ }
-        | { type: "micro_coral"; amount: integer /* int64 */ }
-        | { type: "usd"; amount: number /* double */ }
-      // The payment session ID for this remote agent. This will be shared with all other remote agents in the graph
-      paymentSessionId: string
-    }
-    | {
-      type: "remote_request"
-      // The runtime that should be used for this remote agent. Servers can export only specific runtimes so the runtime choice may narrow servers that can adequately provide the agent
-      runtime: RuntimeId
-      // The maximum we are willing to pay for this remote agent, note that if this is not high enough there may be no remotes willing to provide the agent
-      maxCost:
-        | { type: "coral"; amount: number /* double */ }
-        | { type: "micro_coral"; amount: integer /* int64 */ }
-        | { type: "usd"; amount: number /* double */ }
-      // A description of which servers should be queried for this remote agent request
-      serverSource:
-        | {
-          type: "org.coralprotocol.coralserver.agent.graph.server.GraphAgentServerSource.Indexer"
-          indexer: string
-        }
-        | { type: "servers"; servers: GraphAgentServer[] }
-      // Customisation for the scoring of servers
-      serverScoring?:
-        | {
-          type: "custom"
-          scorers: Array<
-            | {
-              op: "is_false"
-              type: GraphAgentServerAttributeType
-              // A flat negative or positive weight
-              effect: flat
-            }
-            | {
-              op: "is_not_present"
-              type: GraphAgentServerAttributeType
-              // A flat negative or positive weight
-              effect: flat
-            }
-            | { op: "is_present"; type: GraphAgentServerAttributeType; effect: GraphAgentServerScorerEffect }
-            | {
-              op: "is_true"
-              type: GraphAgentServerAttributeType
-              // A flat negative or positive weight
-              effect: flat
-            }
-            | {
-              op: "string_equal"
-              type: GraphAgentServerAttributeType
-              string: string
-              // A flat negative or positive weight
-              effect: flat
-            }
-            | {
-              op: "string_not_equal"
-              type: GraphAgentServerAttributeType
-              string: string
-              // A flat negative or positive weight
-              effect: flat
-            }>
-        }
-        | { type: "default" }
-    }
   // An optional list of resources and an accompanied budget that this agent may spend on services that accept x402 payments
   x402Budgets?: X402BudgetedResource[]
   // A map where the key is the name of the proxy request and the value is the configuration and model that should be selected.
@@ -814,40 +741,6 @@ type RegistryAgentIdentifier = {
 type RuntimeId = "executable" | "docker" | "function" | "prototype"
 ```
 
-## GraphAgentServer
-
-```ts
-type GraphAgentServer = {
-  address: string
-  port: integer
-  secure: boolean
-  attributes: Array<
-    | { format: "boolean"; type: GraphAgentServerAttributeType; value: boolean }
-    | { format: "number"; type: GraphAgentServerAttributeType; value: number /* double */ }
-    | { format: "string"; type: GraphAgentServerAttributeType; value: string }>
-}
-```
-
-## GraphAgentServerAttributeType
-
-```ts
-type GraphAgentServerAttributeType = "geographic_location" | "attested_by"
-```
-
-## flat
-
-A flat negative or positive weight
-
-```ts
-type flat = { weight: number /* double */ }
-```
-
-## GraphAgentServerScorerEffect
-
-```ts
-type GraphAgentServerScorerEffect = { weight: number /* double */ } | { weight: number /* double */ }
-```
-
 ## X402BudgetedResource
 
 A budget given to an agent for a specific resource
@@ -901,6 +794,7 @@ type GraphAgentBudgetSettings = {
 
 ```ts
 type ToolSchema = {
+  $schema?: string
   properties?: Record<string, JsonElement>
   required?: string[]
   $defs?: Record<string, JsonElement>
@@ -1122,7 +1016,11 @@ type FunctionRuntime = { transport: McpTransportType }
 type PrototypeRuntime = {
   volatile: boolean
   proxy: PrototypeString
-  client?: PrototypeClient
+  client?:
+    | { type: "anthropic" }
+    | { type: "deepseek"; strict: boolean }
+    | { type: "openai"; strict: boolean }
+    | { type: "openrouter"; strict: boolean }
   iterations: PrototypeInteger
   delay: PrototypeInteger
   prompts: PrototypePrompts
@@ -1155,7 +1053,11 @@ type ByteSize = object
 ## AgentLlmProxyRequest
 
 ```ts
-type AgentLlmProxyRequest = { name: string; format: { type: "Anthropic" } | { type: "OpenAI" }; models: string[] }
+type AgentLlmProxyRequest = {
+  name: string
+  format: { type: "Anthropic" } | { type: "DeepSeek" } | { type: "OpenAI" }
+  models: string[]
+}
 ```
 
 ## RegistryAgentMarketplacePricing
@@ -1184,12 +1086,6 @@ type McpTransportType = "sse" | "streamable_http"
 
 ```ts
 type PrototypeString = object
-```
-
-## PrototypeClient
-
-```ts
-type PrototypeClient = "openai" | "openrouter" | "anthropic"
 ```
 
 ## PrototypeInteger

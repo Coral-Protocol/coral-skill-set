@@ -17,7 +17,7 @@ configuration tables.
 The top-level `edition` field is a number indicating the edition of the `coral-agent.toml` file, allowing the Coral
 server and other applications to quickly identify whether or not they are compatible.
 
-__The current edition is 5.__ Public Coral Server 1.4.0 accepts editions 3 through 5. Older editions still need the required metadata and valid runtime/options fields.
+__The current edition is 5.__ Public Coral Server 1.5.0 accepts editions 3 through 5. Older editions still need the required metadata and valid runtime/options fields.
 
 ## Tables
 

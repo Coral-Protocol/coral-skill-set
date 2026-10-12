@@ -45,7 +45,7 @@ Configure a matching [server LLM provider](../../../../reference/server/llm-prox
 | Field | Default | Meaning |
 |---|---|---|
 | `proxy` | Required | Name of a request in `llm.proxies`. |
-| `client` | Inferred from proxy format | `"openai"`, `"anthropic"`, or explicit `"openrouter"` in the v1.4.0 release. |
+| `client` | Inferred from proxy format | `"openai"`, `"anthropic"`, `"deepseek"`, or explicit `"openrouter"`. |
 | `iterations` | `20` | Positive number of LLM/tool iterations. |
 | `delay` | `0` | Nonnegative delay in milliseconds before iterations after the first. |
 | `volatile` | `false` | If true, an iteration error stops the runtime; otherwise the error is logged and later iterations continue. |
