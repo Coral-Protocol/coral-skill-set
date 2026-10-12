@@ -13,6 +13,10 @@ Source: https://docs.coralos.ai/guides/writing-agents
 
 Start with the [Koog template](../guides/quickstart.md#koog-template) when writing a new agent. It is also the reference when porting to another framework. Agent code is the place to control context management, memory, and execution flow. The [prototype runtime](../reference/agent/tables/runtimes/prototype.md) is a smaller option for cases known to need only a simple LLM/tool loop.
 
+> **Tip:**
+>
+> To build an agent around existing MCP servers, or to port an existing agent, we recommend asking a coding agent such as Codex or Claude Code to do it, using the [Koog agent template](https://github.com/Coral-Protocol/coral-koog-agent) as a reference. Give it this page as the contract the result must meet. [Coralizer](../guides/coralizer.md#converting-an-mcp-server) has an example prompt.
+
 Agents interact with Coral sessions exclusively through a uniquely provided MCP server. All interaction with other agents is then done with the tools available through that MCP.
 
 ### Connect to Coral

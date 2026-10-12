@@ -22,7 +22,7 @@ Common configuration keys and their defaults (set in code):
 - `logging.logFileName`: `server.log` (inside `logging.logFilesDirectory`)
 
 Overriding via environment variables:
-- Use a **double underscore between table and field**, and a single underscore between words within a field: `NETWORK__BIND_PORT=5555` maps to `network.bindPort`. `NETWORK_BIND_PORT` does not override that setting.
+- Use a **double underscore between table and field**, and a single underscore between words within a field: `NETWORK__BIND_PORT=5555` maps to `network.bindPort`. `NETWORK_BIND_PORT` does not override that setting. (Hoplite does the mapping)
 - For the standard server build, command-line settings override environment settings, which override the file supplied through `CONFIG_FILE_PATH`.
 - You can instead mount a complete `config.toml` and set `CONFIG_FILE_PATH`.
 

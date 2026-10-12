@@ -70,7 +70,7 @@ A resolved proxy request named `MAIN` provides `CORAL_PROXY_URL_MAIN`, `CORAL_PR
 ### Other environment variables
 
 - An environment variable for every defined [agent option](../../../../reference/agent/tables/options.md)
-- Environment variables configured in the Docker image; the server process environment is not copied wholesale
+- Environment variables configured in the Docker image (*not* including other environment variables the server was launched with)
 - All environment variables configured in the Coral server's [debug.additionalDockerEnvironment](../../../../reference/server/debug.md#additional-docker-environment) configuration field
 
 # Configuration

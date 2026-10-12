@@ -29,16 +29,13 @@ After linking or configuring, verify through the server registry endpoint or Con
 
 ## MCP Server Or Tool Process
 
-If the project exposes an MCP server, use the current Coralizer MCP wrapping flow.
+To give Coral agents access to MCP servers, build a Koog agent around them. Do not use Coralizer's `mcp` scaffolding; it generates LangChain or coral-rs projects.
 
-General sequence:
+1. Use https://github.com/Coral-Protocol/coral-koog-agent as the reference for project structure, `coral-agent.toml`, options, and the Coral MCP connection. Start a new project with `npm create koog` as shown in `docs/guides/quickstart.md`, or adapt the structure inside the existing repo.
+2. Connect the MCP servers as tool sources alongside Coral's own tools. Expose their URLs and credentials as typed options, never `.env` files.
+3. Meet the contract in `docs/guides/writing-agents.md`, then make the agent discoverable through `registry.localAgents` or `coralizer link`.
 
-1. Prepare an MCP server description JSON.
-2. Run Coralizer to scaffold a Coral agent project.
-3. Edit the generated `coral-agent.toml`.
-4. Link the generated agent or add it to server config.
-
-Verify exact commands against current Coralizer help or docs before running them.
+If the MCP servers are reachable over HTTP and a simple LLM tool loop is enough, the prototype runtime can list them under `tools` without code. See `docs/reference/agent/tables/runtimes/prototype.md`.
 
 ## No Manifest
 

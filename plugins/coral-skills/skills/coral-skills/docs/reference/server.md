@@ -9,9 +9,10 @@ The Coral server is configured using configuration tables. The following tables 
 | Table                                    | Description                                                                   |
 |------------------------------------------|-------------------------------------------------------------------------------|
 | [authentication](../reference/server/auth.md) | Configure access to the Coral server                                          |
+| [cache](../reference/server/cache.md) | File cache paths |
 | [cloud](../reference/server/cloud.md) | Coral Cloud integration |
 | [llm-proxy](../reference/server/llm-proxy.md) | LLM providers, limits, and retries |
-| [session](https://docs.coralos.ai/reference/server/session) | Agent wait-tool timeout |
+| [session](../reference/server/session.md) | Agent wait-tool timeout |
 | [console](../reference/server/console.md)     | Configuration for the built-in Coral console                                  |
 | [debug](../reference/server/debug.md)         | Debugging configuration                                                       |
 | [docker](../reference/server/docker.md)       | Docker runtime configuration                                                  |

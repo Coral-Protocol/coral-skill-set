@@ -5,10 +5,6 @@ Source: https://docs.coralos.ai/reference/agent/tables/options/blob
 A blob option.  Blobs should be used for options that might contain binary data. Blobs should use the
 [filesystem transport](../../../../reference/agent/tables/options/blob.md#filesystem-transport).
 
-> **Warning:**
->
-> In the unpatched v1.4.0 release, binary file/URL defaults can be corrupted while being converted to base64 because they pass through a UTF-8 text decoder. Until running a build with the binary-reference fix, pre-encode binary data and use an inline base64 `default` (or provide the base64 value in the session request). This affects `blob` and `list[blob]` defaults; ordinary UTF-8 text fixtures do not expose the problem.
-
 | Option value      | `transport = "fs"`                             | `transport = "env"`    |
 |-------------------|------------------------------------------------|------------------------|
 | `my option value` | `6D 79 20 6F 70 74 69 6F 6E 20 76 61 6C 75 65` | `bXkgb3B0aW9uIHZhbHVl` |
@@ -23,13 +19,13 @@ A blob option.  Blobs should be used for options that might contain binary data.
 type = "blob"
 transport = "fs"
 required = false
-default = "AAECAw==" # bytes 00 01 02 03
+default = { type = "file", path = "image.png" }
 
 display.label = "Example Blob Option"
 display.description = "This is an example blob option."
 display.group = "Example Group"
 
-validation.min_size = { size = 1.0, unit = "B" }
+validation.min_size = { size = 1.0, unit = "KiB" }
 validation.max_size = { size = 1.0, unit = "MiB" }
 ```
 
@@ -40,13 +36,16 @@ validation.max_size = { size = 1.0, unit = "MiB" }
 type = "list[blob]"
 transport = "fs"
 required = false
-default = ["AAECAw==", "BAUGBw=="]
+default = [
+    { type = "file", path = "icon1.png" },
+    { type = "file", path = "icon2.png" }
+]
 
 display.label = "Example Blob List Option"
 display.description = "This is an example blob list option."
 display.group = "Example Group"
 
-validation.min_size = { size = 1.0, unit = "B" }
+validation.min_size = { size = 1.0, unit = "KiB" }
 validation.max_size = { size = 2.0, unit = "KiB" }
 ```
 

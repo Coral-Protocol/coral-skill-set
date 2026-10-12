@@ -261,27 +261,6 @@ type AgentClaimResult = {
 }
 ```
 
-## X402ProxyRequest
-
-A proxied request to a service that potentially requests x402 payment
-
-```ts
-type X402ProxyRequest = {
-  // The full endpoint of the target API
-  endpoint: string
-  // The API method, e.g. POST, GET, DELETE, etc
-  method: string
-  // The body of the request
-  body: Record<string, JsonElement>
-}
-```
-
-## X402ProxiedResponse
-
-```ts
-type X402ProxiedResponse = { code: integer /* int32 */; body: string }
-```
-
 ## AgentGraphRequest
 
 ```ts
@@ -816,12 +795,6 @@ type SessionThreadMessage = {
 }
 ```
 
-## JsonElement
-
-```ts
-type JsonElement = object
-```
-
 ## RegistryAgentIdentifier
 
 ```ts
@@ -1111,6 +1084,12 @@ type RegistryAgentDependency = {
   // A list of options associated with this dependency
   options: string[]
 }
+```
+
+## JsonElement
+
+```ts
+type JsonElement = object
 ```
 
 ## AgentCapability

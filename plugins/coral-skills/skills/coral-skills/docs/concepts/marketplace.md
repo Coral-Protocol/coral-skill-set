@@ -95,11 +95,11 @@ The Registry API (`/api/v1/registry/...`) exposes marketplace items side by side
 
 - Remote providers/payments are disabled. Only `provider.type = "local"` is supported for execution on v1.4.0.
 - Discovery and pricing metadata do not provide a remote rental service. v1.4.0 registers `POST /api/v1/agent-rental/reserve` and `GET /api/v1/agent-rental/wallet`: reservation handling is unimplemented, while the wallet endpoint returns the configured wallet address or HTTP 403 if none is configured. These endpoints were removed after the v1.4.0 tag.
-- Local budget accounting and agent claims are separate from on-chain settlement; see [Payments](../concepts/payments.md).
+- Pricing metadata does not set session budgets. See [Budgets and claims](../concepts/budgets.md) for local usage accounting.
 - Use the marketplace today primarily for discovery and metadata; execution should be local.
 
 See also:
 
-- [Payments](../concepts/payments.md)
+- [Budgets and claims](../concepts/budgets.md)
 - [Security](../configuration/security.md)
 - [MCP Integration](../concepts/mcp.md)

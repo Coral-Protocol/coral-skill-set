@@ -63,11 +63,11 @@ This architecture has also demonstrated measurable performance gains on benchmar
 
 Because each agent in Coral’s architecture handles smaller, well-defined responsibilities and communicates via a scalable graph, you gain:
 
-- **Higher throughput** — Multiple agents run concurrently without blocking, using the server’s coroutine-based connection handling. Actual throughput also depends on agent implementations and provider limits.
+- **Higher throughput** — Multiple agents run concurrently without blocking, using the server’s coroutine-based connection handling. Blocking agents made in e.g. Python do not impact the whole system, as they would be isolated processes.
 - **Improved reasoning quality** — Specialized agents continuously refine each other’s outputs in real time.
-- **Safer and more predictable AI systems** — Instead of scaling performance by making models larger, Coral lets you scale by adding more intelligent agents.
+- **Safer and more predictable AI systems** — Instead of just scaling performance by making models larger, Coral lets you scale by adding more intelligent agents.
 
-  See more results on the **GAIA benchmark:** [https://gaia.coralos.ai/](https://gaia.coralos.ai/)
+  See more results on the **GAIA benchmark:** [https://gaia.coralos.ai/](https://gaia.coralprotocol.org/)
 
 ### Ready to Start Building?
 
